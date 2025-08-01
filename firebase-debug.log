@@ -1,0 +1,107 @@
+[debug] [2025-07-29T21:10:49.815Z] ----------------------------------------------------------------------
+[debug] [2025-07-29T21:10:49.818Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\dshad\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init hosting
+[debug] [2025-07-29T21:10:49.818Z] CLI Version:   14.7.0
+[debug] [2025-07-29T21:10:49.818Z] Platform:      win32
+[debug] [2025-07-29T21:10:49.818Z] Node Version:  v22.17.0
+[debug] [2025-07-29T21:10:49.819Z] Time:          Tue Jul 29 2025 17:10:49 GMT-0400 (Eastern Daylight Time)
+[debug] [2025-07-29T21:10:49.819Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-07-29T21:10:49.821Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2025-07-29T21:10:49.868Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-07-29T21:10:49.869Z] > authorizing via signed-in user (zheshimu@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Labor\labor
+
+Before we get started, keep in mind:
+
+  * You are currently outside your home directory
+
+[debug] [2025-07-29T21:10:50.122Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2025-07-29T21:10:50.122Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2025-07-29T21:11:18.180Z] Checked if tokens are valid: false, expires at: 1751102504977
+[debug] [2025-07-29T21:11:18.181Z] Checked if tokens are valid: false, expires at: 1751102504977
+[debug] [2025-07-29T21:11:18.181Z] > refreshing access token with scopes: []
+[debug] [2025-07-29T21:11:18.183Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-07-29T21:11:18.183Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-07-29T21:11:18.460Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-07-29T21:11:18.461Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-07-29T21:11:18.475Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/availableProjects pageSize=100
+[debug] [2025-07-29T21:11:19.017Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/availableProjects 200
+[debug] [2025-07-29T21:11:19.017Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/availableProjects [omitted]
+[debug] [2025-07-29T21:11:25.093Z] Checked if tokens are valid: true, expires at: 1753827077461
+[debug] [2025-07-29T21:11:25.093Z] Checked if tokens are valid: true, expires at: 1753827077461
+[debug] [2025-07-29T21:11:25.093Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1beta1/projects/long-equinox-457321-t7:addFirebase [none]
+[debug] [2025-07-29T21:11:25.942Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1beta1/projects/long-equinox-457321-t7:addFirebase 200
+[debug] [2025-07-29T21:11:25.942Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/long-equinox-457321-t7:addFirebase {"name":"operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh"}
+[debug] [2025-07-29T21:11:25.944Z] Checked if tokens are valid: true, expires at: 1753827077461
+[debug] [2025-07-29T21:11:25.944Z] Checked if tokens are valid: true, expires at: 1753827077461
+[debug] [2025-07-29T21:11:25.945Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh [none]
+[debug] [2025-07-29T21:11:32.960Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh 200
+[debug] [2025-07-29T21:11:32.960Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh {"name":"operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh"}
+[debug] [2025-07-29T21:11:33.464Z] [Add Firebase Poller] Retrying task index 0
+[debug] [2025-07-29T21:11:33.465Z] Checked if tokens are valid: true, expires at: 1753827077461
+[debug] [2025-07-29T21:11:33.465Z] Checked if tokens are valid: true, expires at: 1753827077461
+[debug] [2025-07-29T21:11:33.465Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh [none]
+[debug] [2025-07-29T21:11:33.987Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh 200
+[debug] [2025-07-29T21:11:33.987Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh {"name":"operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh"}
+[debug] [2025-07-29T21:11:34.990Z] [Add Firebase Poller] Retrying task index 0
+[debug] [2025-07-29T21:11:34.990Z] Checked if tokens are valid: true, expires at: 1753827077461
+[debug] [2025-07-29T21:11:34.990Z] Checked if tokens are valid: true, expires at: 1753827077461
+[debug] [2025-07-29T21:11:34.991Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh [none]
+[debug] [2025-07-29T21:11:35.310Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh 200
+[debug] [2025-07-29T21:11:35.311Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh {"name":"operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh"}
+[debug] [2025-07-29T21:11:37.316Z] [Add Firebase Poller] Retrying task index 0
+[debug] [2025-07-29T21:11:37.316Z] Checked if tokens are valid: true, expires at: 1753827077461
+[debug] [2025-07-29T21:11:37.316Z] Checked if tokens are valid: true, expires at: 1753827077461
+[debug] [2025-07-29T21:11:37.316Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh [none]
+[debug] [2025-07-29T21:11:37.604Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh 200
+[debug] [2025-07-29T21:11:37.604Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh {"name":"operations/workflows/YjMyOWMzMzUtMTcwNi00NTM0LTkzZWUtNWNlNzgxNmYwY2Zh","done":true,"response":{"@type":"type.googleapis.com/google.firebase.service.v1beta1.FirebaseProject","projectId":"long-equinox-457321-t7","projectNumber":"953223603599","displayName":"My First Project","name":"projects/long-equinox-457321-t7","resources":{"hostingSite":"long-equinox-457321-t7"}}}
+[info] 
+[info] === Your Firebase project is ready! ===
+[info] 
+[info] Project information:
+[info]    - Project ID: long-equinox-457321-t7
+[info]    - Project Name: My First Project
+[info] 
+[info] Firebase console is available at
+[info] https://console.firebase.google.com/project/long-equinox-457321-t7/overview
+[info] i  Using project long-equinox-457321-t7 (My First Project) 
+[info] 
+=== Hosting Setup
+[debug] [2025-07-29T21:11:37.627Z] Checked if tokens are valid: true, expires at: 1753827077461
+[debug] [2025-07-29T21:11:37.627Z] Checked if tokens are valid: true, expires at: 1753827077461
+[debug] [2025-07-29T21:11:37.628Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/long-equinox-457321-t7 [none]
+[debug] [2025-07-29T21:11:37.811Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/long-equinox-457321-t7 200
+[debug] [2025-07-29T21:11:37.811Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/long-equinox-457321-t7 {"projectId":"long-equinox-457321-t7","projectNumber":"953223603599","displayName":"My First Project","name":"projects/long-equinox-457321-t7","resources":{"hostingSite":"long-equinox-457321-t7"},"state":"ACTIVE","etag":"1_a4bd0d07-2ede-458f-a292-b17357da6ff2"}
+[info] 
+[info] Your public directory is the folder (relative to your project directory) that
+[info] will contain Hosting assets to be uploaded with firebase deploy. If you
+[info] have a build process for your assets, use your build's output directory.
+[info] 
+[debug] [2025-07-29T21:14:20.144Z] >>> [apiv2][query] GET https://www.gstatic.com/firebasejs/releases.json [none]
+[debug] [2025-07-29T21:14:20.343Z] <<< [apiv2][status] GET https://www.gstatic.com/firebasejs/releases.json 200
+[debug] [2025-07-29T21:14:20.344Z] <<< [apiv2][body] GET https://www.gstatic.com/firebasejs/releases.json {"current":{"version":"12.0.0","browserURL":"https://www.gstatic.com/firebasejs/12.0.0/firebase.js","packageURL":"https://www.gstatic.com/firebasejs/12.0.0/firebase.tgz"},"live":{"version":"12.0","browserURL":"https://www.gstatic.com/firebasejs/live/12.0/firebase.js","packageURL":"https://www.gstatic.com/firebasejs/live/12.0/firebase.tgz"},"components":{"ai":"https://www.gstatic.com/firebasejs/12.0.0/firebase-ai.js","analytics":"https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js","app":"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js","app-check":"https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js","auth":"https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js","auth/cordova":"https://www.gstatic.com/firebasejs/12.0.0/firebase-auth/cordova.js","auth/web-extension":"https://www.gstatic.com/firebasejs/12.0.0/firebase-auth/web-extension.js","functions":"https://www.gstatic.com/firebasejs/12.0.0/firebase-functions.js","firestore":"https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js","firestore/lite":"https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore/lite.js","installations":"https://www.gstatic.com/firebasejs/12.0.0/firebase-installations.js","storage":"https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js","performance":"https://www.gstatic.com/firebasejs/12.0.0/firebase-performance.js","remote-config":"https://www.gstatic.com/firebasejs/12.0.0/firebase-remote-config.js","messaging":"https://www.gstatic.com/firebasejs/12.0.0/firebase-messaging.js","messaging/sw":"https://www.gstatic.com/firebasejs/12.0.0/firebase-messaging/sw.js","database":"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js","data-connect":"https://www.gstatic.com/firebasejs/12.0.0/firebase-data-connect.js","firestore.memory":"https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.memory.js"}}
+[info] +  Wrote public/index.html 
+[info] 
+[info] i  Detected a .git folder at C:\Labor\labor 
+[info] i  Authorizing with GitHub to upload your service account to a GitHub repository's secrets store. 
+[info] 
+[info] Visit this URL on this device to log in:
+[info] https://github.com/login/oauth/authorize?client_id=89cf50f02ac6aaed3484&state=82743216&redirect_uri=http%3A%2F%2Flocalhost%3A9005&scope=read%3Auser%20repo%20public_repo
+[info] 
+[info] Waiting for authentication...
