@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function UsersTab() {
+export default function DeliversTab() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Users</Text>
-      <Text style={styles.text}>User management and permission controls.</Text>
+      <Text style={styles.title}>Delivers</Text>
+      <Text style={styles.text}>Manage all ongoing and completed delivers here.</Text>
     </View>
   );
 }
