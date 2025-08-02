@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { onAuthStateChanged, User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../firebaseConfig"; // Adjust the import based on your Firebase setup
 
 type AuthContextProps = {
-  user: any;
-  loading: boolean;
+  user: User | null;
   role: string | null;
+  loading: boolean;
+  signOut: () => Promise<void>;
   setUser: (user: any) => void;
   setRole: (role: string | null) => void;
 };
@@ -14,16 +16,16 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<string | null>(null);
- useEffect(() => {
-    // Listen for Firebase Auth state changes
-    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
-      setUser(firebaseUser);
-      if (firebaseUser) {
+  const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setUser(user);
+      if (user) {
         // Fetch role from Firestore
-        const docRef = doc(db, 'users', firebaseUser.uid);
-        const snap = await getDoc(docRef);
+        const userRef = doc(db, "users", user.uid);
+        const snap = await getDoc(userRef);
         setRole(snap.exists() ? snap.data().role : null);
       } else {
         setRole(null);
@@ -32,9 +34,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
     return unsubscribe;
   }, []);
+
+  const signOut = async () => {
+    await auth.signOut();
+    setUser(null);
+    setRole(null);
+  };
   
   return (
-    <AuthContext.Provider value={{ user, loading, role, setUser, setRole }}>
+    <AuthContext.Provider value={{ user, loading, role, signOut, setUser, setRole }}>
       {children}
     </AuthContext.Provider>
   );

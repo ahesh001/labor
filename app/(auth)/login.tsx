@@ -47,11 +47,11 @@ try {
         const role = userDoc.data().role;
         setRole(role); // Set the role in context
         // Navigate based on role
-        if (role === "admin") router.replace("/(admin)/dashboard");
+        if (role === "admin") router.replace("/(admin)/dashboard" as any);
         else if (role === "lead") router.replace("/(lead)/dashboard");
-        else if (role === "user") router.replace("/(user)/dashboard");
+        else if (role === "trucker") router.replace("/(trucker)/dashboard" as any);
         else if (role === "customer") router.replace("/(customer)/dashboard");
-        else router.replace("/(tabs)"); // default/fallback
+        else router.replace("/(auth)/unauthorized" as any); // default/fallback
       } else {
         setError("User record not found.");
       }

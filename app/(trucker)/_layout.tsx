@@ -5,16 +5,16 @@ import { View, StatusBar, Platform } from "react-native";
 import { useAuth } from '../(auth)/context/AuthContext';
 import { router } from 'expo-router';
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function TruckerLayout({ children }: { children: React.ReactNode }) {
   const { role, loading } = useAuth();
 
   useEffect(() => {
-    if (!loading && role !== "admin") {
+    if (!loading && role !== "trucker") {
       router.replace("/(auth)/login");
     }
   }, [role, loading]);
 
-  if (loading || role !== "admin") return null; // or loading spinner
+  if (loading || role !== "trucker") return null; // or loading spinner
 
   return (
     <SafeAreaProvider>
