@@ -139,17 +139,17 @@ With LaborTracker you can:
 
 ---
 
-## 🤖 Marven AI Tier Pricing
+## 🤖 Marven-L Tier Pricing
 
 | Tier              | Included in Pro? | Description |
 |-------------------|------------------|-------------|
-| Core Marven AI    | ✅ Yes           | Basic chat, time insights, Q&A |
-| Marven Pro        | ❌ +$25 / mo     | Multi-turn queries, voice input, analytics |
-| Marven Vision Pack| ❌ +$15 / mo     | OCR/photo scan integration |
-| Marven AutoPilot  | ❌ +$35 / mo     | Auto-scheduling, route optimization |
+| Core Marven-L    | ✅ Yes           | Basic chat, time insights, Q&A |
+| Marven-L Pro        | ❌ +$25 / mo     | Multi-turn queries, voice input, analytics |
+| Marven-L Vision Pack| ❌ +$15 / mo     | OCR/photo scan integration |
+| Marven-L AutoPilot  | ❌ +$35 / mo     | Auto-scheduling, route optimization |
 | Full Suite Bundle | ❌ +$59 / mo     | All Marven packs combined |
 
-🧠 *AI features are modular — pick what you need, scale as you grow.*
+🧠 *Marven-L features are modular — pick what you need, scale as you grow.*
 
 ---
 
