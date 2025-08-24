@@ -1,11 +1,11 @@
 ![Labor-Delivery-Pro](https://github.com/user-attachments/assets/a667bb73-4ff1-411f-a406-c58aff15001b)
 
-# Labor_Tracker
+# LaborTracker
 
 <div align="center">
-  <h3>Labor_Tracker</h3>
+  <h3>LaborTracker</h3>
   <p>
-    A smart delivery tracking system designed for contractors, dispatchers, and logistics teams. Labor_Tracker enables real-time logging of job starts, delivery times, and travel hours, with full support for QR-based SmartBoxes or traditional carrier tracking systems.
+    A smart delivery tracking system designed for contractors, dispatchers, and logistics teams. LaborTracker enables real-time logging of job starts, delivery times, and travel hours, with full support for QR-based SmartBoxes or traditional carrier tracking systems.
     <br /><br />
     The app supports flexible operation modes: use integrated SmartBox hardware for secure drop-offs, or manually track deliveries using carrier APIs like FedEx and UPS.
   </p>
@@ -15,7 +15,7 @@
 
 ## 🧠 Overview & Architecture
 
-Labor_Tracker is one of the first platforms to integrate **Artificial Intelligence as a Service (AIaaS)** for mobile workforce tracking with a complementary **SmartBox-as-a-Service (SBaaS)** solution — empowering teams to manage both personnel and physical assets through one unified, intelligent system.
+LaborTracker is one of the first platforms to integrate **Artificial Intelligence as a Service (AIaaS)** for mobile workforce tracking with a complementary **SmartBox-as-a-Service (SBaaS)** solution — empowering teams to manage both personnel and physical assets through one unified, intelligent system.
 
 The platform features:
 
@@ -25,7 +25,7 @@ The platform features:
 - 📱 Intuitive mobile interface for contractors, logistics operators, and mobile teams
   
 
-SmartBox is an optional hardware add-on — a **secure, 3D-printed, sensor-equipped delivery unit** that syncs with Labor_Tracker to provide:
+SmartBox is an optional hardware add-on — a **secure, 3D-printed, sensor-equipped delivery unit** that syncs with LaborTracker to provide:
 
 - Route validation  
 - Tool protection  
