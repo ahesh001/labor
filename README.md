@@ -54,7 +54,7 @@ SmartBox is an optional hardware add-on — a **secure, 3D-printed, sensor-equip
 
 ---
 
-## 🌍 Use Cases: Labor_Tracker + Marven AI + SmartBox
+## 🌍 Use Cases: LaborTracker + Marven AI + SmartBox
 
 - **E-commerce Delivery:** Last-mile delivery with SmartBox proof-of-delivery, ETAs, and alerts.
 - **Fleet Management:** Track vehicles, log hours, AI route suggestions, and SmartBox security.
@@ -70,7 +70,7 @@ SmartBox is an optional hardware add-on — a **secure, 3D-printed, sensor-equip
 
 ## 💰 Pricing & Commercial Models
 
-Labor_Tracker combines flexible software subscriptions, modular AI upgrades, and SmartBox hardware rentals to give teams what they need—without overpaying for what they don’t.
+LaborTracker combines flexible software subscriptions, modular AI upgrades, and SmartBox hardware rentals to give teams what they need—without overpaying for what they don’t.
 
 ### 💸 Cost Per User (Baseline)
 
@@ -230,7 +230,7 @@ With LaborTracker you can:
 
 Each SmartBox acts as a secure, trackable unit using a QR tag (your passive transponder) or optional RFID/NFC chip.
 
-- **Box is packed → QR code is scanned → delivery entry is created in Labor_Tracker.**
+- **Box is packed → QR code is scanned → delivery entry is created in LaborTracker.**
 - SmartBox ID is tied to real-time GPS and status updates.
 - Customers can scan the QR to confirm receipt.
 
@@ -241,7 +241,7 @@ Each SmartBox acts as a secure, trackable unit using a QR tag (your passive tran
 
 ### 💻 2. Without SmartBox (Software-Only Mode)
 
-No SmartBox? No problem. Companies can use Labor_Tracker entirely through manual or synced tracking numbers.
+No SmartBox? No problem. Companies can use LaborTracker entirely through manual or synced tracking numbers.
 
 - Staff enters or pastes a third-party tracking number (FedEx, UPS, USPS, etc.).
 - LaborTracker can poll the carrier’s tracking API or store status updates manually.
