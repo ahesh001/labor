@@ -54,7 +54,7 @@ SmartBox is an optional hardware add-on — a **secure, 3D-printed, sensor-equip
 
 ---
 
-## 🌍 Use Cases: LaborTracker + Marven AI + SmartBox
+## 🌍 Use Cases: LaborTracker + Marven-L AI + SmartBox
 
 - **E-commerce Delivery:** Last-mile delivery with SmartBox proof-of-delivery, ETAs, and alerts.
 - **Fleet Management:** Track vehicles, log hours, AI route suggestions, and SmartBox security.
