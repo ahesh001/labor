@@ -87,7 +87,7 @@ Labor_Tracker combines flexible software subscriptions, modular AI upgrades, and
 
 ### 📈 ROI for Contractors & Teams
 
-With Labor_Tracker you can:
+With LaborTracker you can:
 - Save **1–3 hours per worker/week** (~$25–$75/month value)
 - Prevent overtime via **AI alerts**
 - Eliminate **paper timesheets & HR bottlenecks**
@@ -108,12 +108,12 @@ With Labor_Tracker you can:
 
 ---
 
-## 📦 Labor_Tracker Software Plans
+## 📦 LaborTracker Software Plans
 
 | Plan                     | Price             | Details |
 |--------------------------|------------------|---------|
-| **Labor_Tracker (Free)** | $0               | Basic chat, time insights, usage tracking |
-| **Labor_Tracker Pro**    | $49 / mo         | Up to 10 workers + AI upgrade options |
+| **LaborTracker (Free)** | $0               | Basic chat, time insights, usage tracking |
+| **LaborTracker Pro**    | $49 / mo         | Up to 10 workers + AI upgrade options |
 | **Enterprise (Nonprofit)** | $499 / year   | 1 month free, full features, support |
 | **Enterprise (Full)**    | $3,000 / year    | Up to 5 teams, SmartBox bundle, extended data retention |
 | **Add-on User**          | $5 / user        | Expand your team flexibly |
@@ -244,7 +244,7 @@ Each SmartBox acts as a secure, trackable unit using a QR tag (your passive tran
 No SmartBox? No problem. Companies can use Labor_Tracker entirely through manual or synced tracking numbers.
 
 - Staff enters or pastes a third-party tracking number (FedEx, UPS, USPS, etc.).
-- Labor_Tracker can poll the carrier’s tracking API or store status updates manually.
+- LaborTracker can poll the carrier’s tracking API or store status updates manually.
 - Status flows through your dashboard like any SmartBox delivery.
 
 **Benefits:**
