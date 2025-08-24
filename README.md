@@ -289,6 +289,18 @@ npm run reset-project
 
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
+## Usage
+
+Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+
+_For more examples, please refer to the [Documentation](https://example.com)_
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Contact
+
+Project Link: [https://github.com/ahesh001/Labor_Tracker](https://github.com/ahesh001/Labor_Tracker)
+
 ## Learn more
 
 To learn more about developing your project with Expo, look at the following resources:
