@@ -22,7 +22,7 @@ The platform features:
 - 📍 Real-time GPS crew tracking  
 - 🕒 Shift logs  
 - 🤖 AI-generated productivity insights powered by **Marven-L** (Marven Logistics)
-- 📱 Intuitive mobile interface for contractors, logistics operators, and mobile teams<img width="1536" height="1024" alt="Two_Path_Sys_LaborTracker" src="https://github.com/user-attachments/assets/e9c30517-b0fa-4140-826e-1107168f69ce" />
+- 📱 Intuitive mobile interface for contractors, logistics operators, and mobile teams
   
 
 SmartBox is an optional hardware add-on — a **secure, 3D-printed, sensor-equipped delivery unit** that syncs with Labor_Tracker to provide:
@@ -194,6 +194,6 @@ No SmartBox? No problem. Companies can use Labor_Tracker entirely through manual
 
 ---
 
-## 📥 Flow Diagram
+## 📥 Two-Path System Diagram
 
-![Two-Path System for LaborTracker Tracking](./Two_Path_Sys_LaborTracker.png)
+<img width="1536" height="1024" alt="Two_Path_Sys_LaborTracker" src="https://github.com/user-attachments/assets/e9c30517-b0fa-4140-826e-1107168f69ce" />
