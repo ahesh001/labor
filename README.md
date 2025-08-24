@@ -54,6 +54,33 @@ SmartBox is an optional hardware add-on — a **secure, 3D-printed, sensor-equip
 
 ---
 
+## 🧠 Smart Features
+
+### 📦 SmartBox (In Development)
+
+The **SmartBox** is a rugged, sensor-enabled, AI-integrated delivery locker designed to bring physical asset tracking into the Labor_Tracker ecosystem. Mounted on-site or vehicle-equipped, it enables secure deliveries, hands-free check-ins, and verifiable chain-of-custody for high-value assets or tools.
+
+Each SmartBox connects to the Labor_Tracker platform via QR code, BLE, or optional LTE. This allows contractors, drivers, or field technicians to scan, unlock, drop off, and verify deliveries without paper forms or key management.
+
+When paired with **Marven AI**, SmartBox can intelligently:
+- Recommend optimized delivery/drop-off windows  
+- Detect access anomalies or unauthorized openings  
+- Trigger incident alerts or missed-scan warnings  
+- Analyze usage patterns for better route planning
+
+#### 🔐 Core Features Include:
+- ✅ QR-scanned delivery completion (auto-logs proof of delivery)
+- ✅ Guest delivery support (no login required)
+- ✅ AI-powered dispatch timing and predictions
+- ✅ Secure digital handoff logs (time, GPS, signature, photo)
+- ✅ Tamper detection via sensors (reed switch, weight pad, accelerometer)
+- ✅ Optional weather-resistant + solar-powered casing
+
+> 📸 *SmartBox photos will be added here once available.*
+
+---
+
+
 ## 🌍 Use Cases: LaborTracker + Marven-L AI + SmartBox
 
 - **E-commerce Delivery:** Last-mile delivery with SmartBox proof-of-delivery, ETAs, and alerts.
