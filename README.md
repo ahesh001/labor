@@ -54,36 +54,6 @@ SmartBox is an optional hardware add-on — a **secure, 3D-printed, sensor-equip
 
 ---
 
-## 🚛 Two-Path System for LaborTracker Tracking
-
-### 🔐 1. With SmartBox (Hardware Integration)
-
-Each SmartBox acts as a secure, trackable unit using a QR tag (your passive transponder) or optional RFID/NFC chip.
-
-- **Box is packed → QR code is scanned → delivery entry is created in Labor_Tracker.**
-- SmartBox ID is tied to real-time GPS and status updates.
-- Customers can scan the QR to confirm receipt.
-
-**Benefits:**
-- Seamless, tamper-proof tracking.
-- “Wow factor” from physical hardware.
-- Reduces lost packages and misdelivery risk.
-
-### 💻 2. Without SmartBox (Software-Only Mode)
-
-No SmartBox? No problem. Companies can use Labor_Tracker entirely through manual or synced tracking numbers.
-
-- Staff enters or pastes a third-party tracking number (FedEx, UPS, USPS, etc.).
-- Labor_Tracker can poll the carrier’s tracking API or store status updates manually.
-- Status flows through your dashboard like any SmartBox delivery.
-
-**Benefits:**
-- No hardware required.
-- Fast onboarding for new companies.
-- Compatible with existing shipping tools.
-
----
-
 ## 🌍 Use Cases: Labor_Tracker + Marven AI + SmartBox
 
 - **E-commerce Delivery:** Last-mile delivery with SmartBox proof-of-delivery, ETAs, and alerts.
@@ -100,40 +70,100 @@ No SmartBox? No problem. Companies can use Labor_Tracker entirely through manual
 
 ## 💰 Pricing & Commercial Models
 
-**Per User Cost:**  
-- Firebase + Hosting: $0.50–$1  
-- AI Inference: $2–$4  
-- Notifications/Maps: $0.20–$0.50  
-- Infra + Support: $1–$2  
-= Total: $4–$7 / mo (est.)
+Labor_Tracker combines flexible software subscriptions, modular AI upgrades, and SmartBox hardware rentals to give teams what they need—without overpaying for what they don’t.
 
-**Plan Pricing:**
+### 💸 Cost Per User (Baseline)
 
-| Plan                      | Price              | Details |
-|---------------------------|--------------------|---------|
-| Labor Tracker (Free)      | $0                 | Full app access, basic AI |
-| Labor Tracker Pro         | $49 / mo           | Up to 10 workers, Marven upgrades |
-| Enterprise (Non-profit)   | $499 / year        | 1 month free, full support |
-| Enterprise Annual         | $3,000 / year      | 5 teams, 10 SmartBoxes, support |
-| Add-on User               | $5 / user          | Scales team size easily |
+| Component                             | Est. Monthly Cost per User |
+|---------------------------------------|-----------------------------|
+| Firebase Hosting & Firestore          | ~$0.50–$1                  |
+| AI Inference (Ollama + OpenAI Fallback) | ~$2–$4 (10–20 Qs/month)   |
+| Push Notifications, Maps, APIs        | ~$0.20–$0.50               |
+| Support, Infra, Margin                | ~$1–$2                     |
 
-**SmartBox:**
+**📊 Total Estimated Cost: ~$4–$7 per user/month**
 
-| Option           | Price                  |
-|------------------|------------------------|
-| Rental           | $15 / mo / box         |
-| Purchase         | $199 one-time          |
-| LTE Upgrade      | +$5 / mo               |
+---
 
-**AI Upgrades:**
+### 📈 ROI for Contractors & Teams
 
-| AI Tier              | Price      |
-|----------------------|------------|
-| Core (Included)      | ✅ Yes     |
-| Marven Pro           | +$25 / mo  |
-| Vision Pack          | +$15 / mo  |
-| AutoPilot            | +$35 / mo  |
-| Full Marven Suite    | +$59 / mo  |
+With Labor_Tracker you can:
+- Save **1–3 hours per worker/week** (~$25–$75/month value)
+- Prevent overtime via **AI alerts**
+- Eliminate **paper timesheets & HR bottlenecks**
+- Gain **real-time visibility** across mobile teams
+- Replace a **junior analyst** with AI-powered insights
+
+---
+
+### 🧪 Competitor Comparison
+
+| Competitor        | Price                   | AI Features?       |
+|-------------------|--------------------------|---------------------|
+| ClockShark        | $40 base + $8/user       | ❌ No AI            |
+| Homebase          | $24–99 + $6/user         | ⚠️ Light automation |
+| Hubstaff          | $7–10/user               | ✅ Some analytics   |
+| Workyard          | ~$9–15/user              | ✅ GPS + analytics  |
+| QuickBooks Time   | $20 base + $8/user       | ⚠️ Basic time tools |
+
+---
+
+## 📦 Labor_Tracker Software Plans
+
+| Plan                     | Price             | Details |
+|--------------------------|------------------|---------|
+| **Labor_Tracker (Free)** | $0               | Basic chat, time insights, usage tracking |
+| **Labor_Tracker Pro**    | $49 / mo         | Up to 10 workers + AI upgrade options |
+| **Enterprise (Nonprofit)** | $499 / year   | 1 month free, full features, support |
+| **Enterprise (Full)**    | $3,000 / year    | Up to 5 teams, SmartBox bundle, extended data retention |
+| **Add-on User**          | $5 / user        | Expand your team flexibly |
+
+---
+
+## 📦 SmartBox Hardware Pricing
+
+| Option           | Price                  | Details |
+|------------------|------------------------|---------|
+| Monthly Rental   | $15 / box / mo         | OTA updates, LTE fallback, warranty included |
+| Buy Outright     | $199 / box             | One-time cost, firmware updates via app |
+| LTE Upgrade      | +$5 / mo               | Optional cellular backup for remote use |
+
+### 📏 SmartBox Sizes
+
+| Size (inches)    | Material Cost | Total Cost (w/ hardware) |
+|------------------|---------------|---------------------------|
+| 24 x 16 x 14     | ~$167.82      | ~$263.82                  |
+| 10 x 7 x 5       | ~$10.93       | ~$106.93                  |
+| 7 x 5 x 4        | ~$4.37        | ~$100.37                  |
+| 4 x 4 x 4        | ~$2.00        | ~$98.00                   |
+
+---
+
+## 🤖 Marven AI Tier Pricing
+
+| Tier              | Included in Pro? | Description |
+|-------------------|------------------|-------------|
+| Core Marven AI    | ✅ Yes           | Basic chat, time insights, Q&A |
+| Marven Pro        | ❌ +$25 / mo     | Multi-turn queries, voice input, analytics |
+| Marven Vision Pack| ❌ +$15 / mo     | OCR/photo scan integration |
+| Marven AutoPilot  | ❌ +$35 / mo     | Auto-scheduling, route optimization |
+| Full Suite Bundle | ❌ +$59 / mo     | All Marven packs combined |
+
+🧠 *AI features are modular — pick what you need, scale as you grow.*
+
+---
+
+
+## 🎯 Growth Goals
+
+| Milestone            | Target Revenue                        |
+|----------------------|----------------------------------------|
+| **First 6 Months**   | 100 paying teams → $4,900 MRR          |
+| **Year 1**           | 500 teams, 1,000 SmartBoxes → $30K MRR |
+| **Year 3**           | 5,000+ teams, 10,000 SmartBoxes        |
+| **Year 4 Goal**      | $5M ARR, 40% net margin                |
+
+📦 Designed for sustainable SaaS + Hardware-as-a-Service growth
 
 ---
 
@@ -194,6 +224,32 @@ No SmartBox? No problem. Companies can use Labor_Tracker entirely through manual
 
 ---
 
-## 📥 Two-Path System Diagram
+## 🚛 Two-Path System for LaborTracker Tracking + Flow Diagram
+
+### 🔐 1. With SmartBox (Hardware Integration)
+
+Each SmartBox acts as a secure, trackable unit using a QR tag (your passive transponder) or optional RFID/NFC chip.
+
+- **Box is packed → QR code is scanned → delivery entry is created in Labor_Tracker.**
+- SmartBox ID is tied to real-time GPS and status updates.
+- Customers can scan the QR to confirm receipt.
+
+**Benefits:**
+- Seamless, tamper-proof tracking.
+- “Wow factor” from physical hardware.
+- Reduces lost packages and misdelivery risk.
+
+### 💻 2. Without SmartBox (Software-Only Mode)
+
+No SmartBox? No problem. Companies can use Labor_Tracker entirely through manual or synced tracking numbers.
+
+- Staff enters or pastes a third-party tracking number (FedEx, UPS, USPS, etc.).
+- Labor_Tracker can poll the carrier’s tracking API or store status updates manually.
+- Status flows through your dashboard like any SmartBox delivery.
+
+**Benefits:**
+- No hardware required.
+- Fast onboarding for new companies.
+- Compatible with existing shipping tools.
 
 <img width="1536" height="1024" alt="Two_Path_Sys_LaborTracker" src="https://github.com/user-attachments/assets/e9c30517-b0fa-4140-826e-1107168f69ce" />
