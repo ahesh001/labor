@@ -3,6 +3,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
+ARG VITE_FIREBASE_API_KEY
+RUN test -n "$VITE_FIREBASE_API_KEY"
 RUN npm run build
 
 FROM nginx:stable-alpine

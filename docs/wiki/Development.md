@@ -6,6 +6,7 @@ Use Node.js 20.19 or newer, then run:
 
 ```sh
 npm ci
+# Copy .env.example to .env.local and set VITE_FIREBASE_API_KEY.
 npm test
 npm run build
 npm run dev
