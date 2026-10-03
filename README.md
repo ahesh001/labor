@@ -49,4 +49,4 @@ Open `http://localhost:8080`. The Docker image is an alternative local/static ho
 
 Pull requests run tests and a production build. Dependabot proposes dependency updates. Repository instructions and two optional GitHub Copilot custom agents live in `.github/`; they help review bugs and build features when Copilot coding agent is available on the account. They do not run independently or deploy changes. See the [development guide](docs/wiki/Development.md) for project layout, checks, and deployment boundaries.
 
-The [documentation guide](docs/wiki/Home.md) contains the overview and walkthrough. Its source lives under [`docs/wiki`](docs/wiki) so documentation changes can be reviewed with code.
+The [GitHub Wiki](https://github.com/ahesh001/labor/wiki) contains the overview and walkthrough. Source copies live under [`docs/wiki`](docs/wiki) so documentation changes can be reviewed with code.
