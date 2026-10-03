@@ -12,6 +12,8 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      VITE_FIREBASE_API_KEY: ci-build-placeholder
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
