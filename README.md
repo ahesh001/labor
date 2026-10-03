@@ -19,6 +19,8 @@ For local development, use Node.js 20.19 or newer:
 
 ```sh
 npm ci
+cp .env.example .env.local
+# Set VITE_FIREBASE_API_KEY in .env.local to this project's current browser key.
 npm run dev
 ```
 
@@ -34,12 +36,12 @@ npm run build
 firebase deploy --only hosting --project labortracker-cab93
 ```
 
-Firebase Authentication and account recovery depend on the project's enabled providers and authorized domains. The client looks up an account role at `users/{uid}` in Firestore. Demo data does not require Firestore writes. No service-account key or private credential belongs in this repository. Firebase's browser SDK configuration identifies the project; it is public client configuration, so access control must be enforced by Firebase rules.
+The build reads `VITE_FIREBASE_API_KEY` from your ignored `.env.local`. Rotate the key in Google Cloud, update this file, deploy and test, then delete the old key. The browser key appears in the built site by design; keeping it out of source control avoids repeat source alerts but does not make it a private credential. Firebase Authentication and account recovery depend on the project's enabled providers and authorized domains. The client looks up an account role at `users/{uid}` in Firestore. Demo data does not require Firestore writes. No service-account key or private credential belongs in this repository; Firebase rules enforce access control.
 
 You can also run the static site locally with Docker:
 
 ```sh
-docker build -t labor-tracker .
+docker build --build-arg VITE_FIREBASE_API_KEY="your-current-browser-key" -t labor-tracker .
 docker run --rm -p 8080:80 labor-tracker
 ```
 
