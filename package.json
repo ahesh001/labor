@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test": "node --test --test-isolation=none",
+    "test": "node tests/workspace.test.js",
     "preview": "vite preview"
   },
   "dependencies": {
