@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { DetailItem, PageShell, StatCard } from '../components/AppShell';
+import HeshwareUpdates from '../components/HeshwareUpdates';
 import { useAuth } from '../context/AuthContext';
 import { useWorkspace } from '../context/WorkspaceContext';
 import { csv, localDate, statuses, summarize } from '../data/workspace';
@@ -26,6 +27,7 @@ export function DashboardPage() {
     <section className="hero-grid"><StatCard label="Hours today" value={totals.hours.toFixed(1)} /><StatCard label="Labor cost today" value={money(totals.cost)} /><StatCard label="Crew members" value={workspace.workers.length} /></section>
     <section className="dashboard-grid"><article className="card panel feature-panel"><p className="section-kicker">Dispatch priorities</p><h2>{totals.escalations ? 'Resolve the flagged handoffs.' : 'Keep your crew and deliveries moving.'}</h2><div className="signal-list">{workspace.deliveries.filter(item => item.status !== 'Delivered').sort((a, b) => Number(b.escalated) - Number(a.escalated)).slice(0, 4).map(item => <div className="signal-item" key={item.id}><strong>{role === 'Guest' ? item.customer : <Link to={`/deliveries/${item.id}`}>{item.customer} →</Link>}</strong><p>{item.status} · {workspace.workers.find(worker => worker.id === item.workerId)?.name || 'Unassigned'}{item.escalated ? ' · Needs attention' : ''}</p></div>)}{!totals.open && <p>No open deliveries. Add a delivery to start dispatching.</p>}</div></article>
     <article className="card panel"><p className="section-kicker">Crew workload today</p><h2>Shift progress</h2><div className="signal-list">{workspace.workers.map(worker => { const hours = workspace.entries.filter(entry => entry.workerId === worker.id && entry.date === localDate()).reduce((sum, entry) => sum + entry.hours, 0); return <div className="signal-item" key={worker.id}><strong>{worker.name}</strong><p>{worker.title} · {hours.toFixed(1)} / {workspace.preferences.dailyHours} hours</p><progress aria-label={`${worker.name} shift progress`} value={Math.min(hours, workspace.preferences.dailyHours)} max={workspace.preferences.dailyHours} /></div>; })}{!workspace.workers.length && <p>Add your crew in Labor & Crew.</p>}</div></article></section>
+    <HeshwareUpdates />
   </PageShell>;
 }
 
@@ -130,3 +132,4 @@ export function NotFoundPage() {
   const { isAuthenticated } = useAuth();
   return <div className="centered-page gradient-page"><div className="card auth-card"><p className="eyebrow">404</p><h2>Page not found</h2><Link className="primary-link" to={isAuthenticated ? '/dashboard' : '/'}>Return to {isAuthenticated ? 'dashboard' : 'sign in'}</Link></div></div>;
 }
+
