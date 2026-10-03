@@ -69,7 +69,7 @@ export function AuthProvider({ children }) {
     user, role, isDemo, loading, authNotice, isAuthenticated: Boolean(user),
     signInDemo(nextRole = 'Admin') { if (!demoRoles.includes(nextRole)) throw new Error('Invalid demo role.'); localSession(nextRole); },
     async signIn(email, password) {
-      localStorage.removeItem('laborTracker.demoRole'); localStorage.removeItem('laborTracker.guest'); mode.current = 'firebase'; setIsDemo(false); setLoading(true); setAuthNotice('');
+      localStorage.removeItem('laborTracker.demoRole'); localStorage.removeItem('laborTracker.guest'); mode.current = 'firebase'; setIsDemo(false); setAuthNotice('');
       try { return await signInWithEmailAndPassword(auth, email.trim(), password); }
       finally { setLoading(false); }
     },
