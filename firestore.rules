@@ -1,0 +1,30 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{db}/documents {
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // New browser accounts begin with the least-privileged role.
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.role == 'User';
+
+      // Profile owners can edit their details, but cannot grant themselves roles.
+      allow update: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.role == resource.data.role;
+
+      // Deleting a profile would let its owner recreate it; use Admin SDK for removal.
+      allow delete: if false;
+    }
+
+    match /deliveries/{doc} {
+      allow read: if request.auth != null;
+      allow create: if get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role in ['User', 'Lead'];
+      allow update: if get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'Lead';
+      allow delete: if get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'Admin';
+    }
+  }
+}
+
