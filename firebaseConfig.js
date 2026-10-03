@@ -2,8 +2,12 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
+if (!import.meta.env.VITE_FIREBASE_API_KEY) {
+  throw new Error('VITE_FIREBASE_API_KEY is required to initialize Firebase.');
+}
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDE-d66lOrk3hqa0X4t7-4GlQfvbUq6ovs",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "labortracker-cab93.firebaseapp.com",
   projectId: "labortracker-cab93",
   storageBucket: "labortracker-cab93.firebasestorage.app",
