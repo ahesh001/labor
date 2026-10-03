@@ -3,8 +3,13 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
+const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+if (!apiKey) {
+  throw new Error('Missing VITE_FIREBASE_API_KEY. Set it in the local or deployment environment.');
+}
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDE-d66lOrk3hqa0X4t7-4GlQfvbUq6ovs",
+  apiKey,
   authDomain: "labortracker-cab93.firebaseapp.com",
   projectId: "labortracker-cab93",
   storageBucket: "labortracker-cab93.appspot.com",
@@ -14,7 +19,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);         // Memory persistence for Expo Go
+const auth = getAuth(app);
 const db = getFirestore(app);
 
 export { app, auth, db };
