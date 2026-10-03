@@ -6,11 +6,11 @@ node_modules/
 # Expo
 .expo/
 dist/
+.firebase/
 web-build/
 expo-env.d.ts
 
 # Native
-.kotlin/
 *.orig.*
 *.jks
 *.p8
@@ -25,13 +25,20 @@ expo-env.d.ts
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+firebase-debug.log
+*.log
 
 # macOS
 .DS_Store
 *.pem
 
 # local env files
+.env
+.env.*
+!.env.example
 .env*.local
+*service-account*.json
+*serviceAccount*.json
 
 # typescript
 *.tsbuildinfo
