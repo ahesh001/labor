@@ -1,8 +1,0 @@
-.git
-.expo
-node_modules
-dist
-tests
-*.log
-.env*
-README.md

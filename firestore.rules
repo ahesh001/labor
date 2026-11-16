@@ -2,28 +2,87 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{db}/documents {
+    function profile() {
+      return get(/databases/$(db)/documents/users/$(request.auth.uid)).data;
+    }
+    function superAdmin() {
+      return request.auth != null && profile().role in ['Admin', 'Super Admin'];
+    }
+    function roleAllows(permission) {
+      let role = profile().role;
+      return permission in ['orders:read', 'orders:update', 'dispatch:read', 'tracking:publish', 'labor:read', 'labor:update'] && role in ['Lead', 'RegionalAdmin', 'OperationsAdmin']
+        || permission in ['users:read', 'orders:create', 'reports:export'] && role in ['RegionalAdmin', 'OperationsAdmin']
+        || permission in ['users:create', 'dispatch:override', 'tracking:view_all'] && role == 'OperationsAdmin';
+    }
+    function can(permission) {
+      return request.auth != null && (superAdmin() || roleAllows(permission) || profile().get('permissions', []).hasAny(['*:*', permission]));
+    }
+    function inScope(regionId) {
+      return superAdmin() || (regionId is string && profile().get('regions', []).hasAny(['*', regionId]));
+    }
+    function ownsCustomerTracking() {
+      return request.auth != null && profile().role == 'User' && resource.data.customerUid == request.auth.uid;
+    }
     match /users/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null && (request.auth.uid == userId || (can('users:read') && inScope(resource.data.get('regionId', ''))));
 
       // New browser accounts begin with the least-privileged role.
       allow create: if request.auth != null
         && request.auth.uid == userId
-        && request.resource.data.role == 'User';
+        && request.resource.data.role == 'User'
+        && request.resource.data.keys().hasOnly(['email', 'role', 'createdAt', 'displayName']);
+
+      allow create: if can('users:create') && request.resource.data.role == 'User'
+        && request.resource.data.keys().hasOnly(['email', 'role', 'createdAt', 'displayName']);
+      allow create: if can('roles:assign') && request.resource.data.role in ['OperationsAdmin', 'RegionalAdmin', 'Lead', 'Admin', 'Super Admin']
+        && request.resource.data.keys().hasOnly(['email', 'role', 'createdAt', 'displayName', 'permissions', 'regions', 'regionId']);
 
       // Profile owners can edit their details, but cannot grant themselves roles.
-      allow update: if request.auth != null
-        && request.auth.uid == userId
-        && request.resource.data.role == resource.data.role;
+      allow update: if request.auth != null && request.auth.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'phone']);
+
+      allow update: if can('roles:assign') && request.resource.data.role in ['User', 'OperationsAdmin', 'RegionalAdmin', 'Lead']
+        && request.resource.data.keys().hasOnly(['email', 'role', 'createdAt', 'displayName', 'phone', 'permissions', 'regions', 'regionId']);
+      allow update: if can('roles:manage') && request.resource.data.role in ['User', 'OperationsAdmin', 'RegionalAdmin', 'Lead', 'Admin', 'Super Admin']
+        && request.resource.data.keys().hasOnly(['email', 'role', 'createdAt', 'displayName', 'phone', 'permissions', 'regions', 'regionId']);
 
       // Deleting a profile would let its owner recreate it; use Admin SDK for removal.
-      allow delete: if false;
+      allow delete: if can('users:delete') && !(resource.data.role in ['Admin', 'Super Admin']);
     }
 
-    match /deliveries/{doc} {
-      allow read: if request.auth != null;
-      allow create: if get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role in ['User', 'Lead'];
-      allow update: if get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'Lead';
-      allow delete: if get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'Admin';
+    match /deliveries/{deliveryId} {
+      allow read: if can('orders:read') && inScope(resource.data.regionId);
+      allow create: if can('orders:create') && inScope(request.resource.data.regionId);
+      allow update: if can('orders:update') && inScope(resource.data.regionId) && inScope(request.resource.data.regionId);
+      allow delete: if can('orders:cancel') && inScope(resource.data.regionId);
+    }
+    match /customerTracking/{deliveryId} {
+      function validTracking() {
+        let d = request.resource.data;
+        return d.keys().hasAll(['customerUid', 'address', 'scheduledDate', 'status', 'updatedAt', 'regionId'])
+          && d.keys().hasOnly(['customerUid', 'address', 'scheduledDate', 'status', 'updatedAt', 'regionId'])
+          && d.customerUid is string && d.customerUid.size() > 0 && d.customerUid.size() <= 128
+          && d.address is string && d.address.size() > 0 && d.address.size() <= 240
+          && d.scheduledDate is string && d.scheduledDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+          && d.status in ['Pending', 'In Transit', 'Delivered']
+          && d.updatedAt == request.time;
+      }
+      allow read: if ((can('tracking:view_all') && inScope(resource.data.regionId)) || ownsCustomerTracking());
+      allow create: if can('tracking:publish') && inScope(request.resource.data.regionId) && validTracking()
+        && get(/databases/$(db)/documents/users/$(request.resource.data.customerUid)).data.role == 'User';
+      allow update: if can('tracking:publish') && inScope(resource.data.regionId) && validTracking() && request.resource.data.customerUid == resource.data.customerUid && request.resource.data.regionId == resource.data.regionId;
+      allow delete: if can('tracking:delete') && inScope(resource.data.regionId);
+      match /events/{eventId} {
+        allow read: if (can('tracking:view_all') && inScope(get(/databases/$(db)/documents/customerTracking/$(deliveryId)).data.regionId)) || ownsCustomerTracking();
+        allow create: if can('tracking:publish') && inScope(getAfter(/databases/$(db)/documents/customerTracking/$(deliveryId)).data.regionId)
+          && request.resource.data.keys().hasAll(['status', 'at'])
+          && request.resource.data.keys().hasOnly(['status', 'at'])
+          && request.resource.data.status in ['Pending', 'In Transit', 'Delivered']
+          && request.resource.data.at == request.time
+          && getAfter(/databases/$(db)/documents/customerTracking/$(deliveryId)).data.status == request.resource.data.status
+          && getAfter(/databases/$(db)/documents/customerTracking/$(deliveryId)).data.updatedAt == request.time;
+        allow update, delete: if false;
+      }
     }
   }
 }
