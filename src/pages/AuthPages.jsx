@@ -7,13 +7,13 @@ import { useAuth } from '../context/AuthContext';
 
 function StartupIntro() {
   return (
-    <div className="startup-screen">
-      <div className="startup-orb startup-orb-one" />
-      <div className="startup-orb startup-orb-two" />
-      <div className="startup-stage">
-        <div className="startup-mark">LT</div>
+    <main className="startup-screen" aria-busy="true" aria-labelledby="startup-title">
+      <div className="startup-orb startup-orb-one" aria-hidden="true" />
+      <div className="startup-orb startup-orb-two" aria-hidden="true" />
+      <section className="startup-stage" role="status">
+        <div className="startup-mark" aria-hidden="true">LT</div>
         <p className="eyebrow startup-kicker">Labor Tracker</p>
-        <h1>Preparing the dispatch console</h1>
+        <h1 id="startup-title">Preparing the dispatch console</h1>
         <p className="startup-copy">Loading the browser workspace, role-aware access, and delivery overview.</p>
         <div className="startup-track" aria-hidden="true">
           <span />
@@ -34,15 +34,15 @@ function StartupIntro() {
             <p>Shift posture</p>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
 
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, role, signIn, signInAsGuest, signInDemo } = useAuth();
+  const { isAuthenticated, role, signIn, signInDemo } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -98,15 +98,8 @@ export function LoginPage() {
   async function handleGuestLogin() {
     setPending(true);
     setError('');
-
-    try {
-      await signInAsGuest();
-      navigate(nextPath, { replace: true });
-    } catch (submissionError) {
-      setError('Guest access could not be started.');
-    } finally {
-      setPending(false);
-    }
+    navigate('/guest-tracking');
+    setPending(false);
   }
 
   return (
@@ -114,15 +107,20 @@ export function LoginPage() {
       title="Track labor, deliveries, and role access in one web app."
       subtitle="Coordinate your crew, record work hours, and keep every delivery moving."
     >
-      <form className="form" onSubmit={handleSubmit}>
+      <form className="form" aria-label="Sign in" onSubmit={handleSubmit}>
         <label>
           Email
           <input
             type="email"
+            name="email"
+            autoComplete="username"
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? 'signin-error' : undefined}
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder="email@domain.com"
             required
+            autoCapitalize="none"
           />
         </label>
 
@@ -130,6 +128,10 @@ export function LoginPage() {
           Password
           <input
             type="password"
+            name="password"
+            autoComplete="current-password"
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? 'signin-error' : undefined}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             placeholder="Password"
@@ -137,7 +139,7 @@ export function LoginPage() {
           />
         </label>
 
-        {error ? <p className="error-text">{error}</p> : null}
+        {error ? <p id="signin-error" className="error-text" role="alert">{error}</p> : null}
 
         <p className="form-caption">Use a full account for operational access, or guest mode for a limited walkthrough.</p>
 
@@ -146,7 +148,7 @@ export function LoginPage() {
             Open demo workspace
           </button>
           <p className="form-caption">Includes sample deliveries and crew hours. Demo changes are saved in this browser.</p>
-          <button className="primary-button" type="submit" disabled={pending}>
+          <button className="primary-button" type="submit" disabled={pending} aria-busy={pending}>
             {pending ? 'Signing in...' : 'Sign in'}
           </button>
           <button className="secondary-button" type="button" onClick={handleGuestLogin} disabled={pending}>

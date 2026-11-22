@@ -2,6 +2,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createDemoWorkspace, emptyWorkspace, summarize, validateDelivery, validateEntry, csv, isWorkspace, localDate, validDate } from '../src/data/workspace.js';
 
+test('adding hours cannot bypass daily total by reusing an existing ID', () => {
+  const data = createDemoWorkspace();
+  const existing = data.entries[0];
+  assert.throws(() => validateEntry({ ...existing, hours: 24 }, data), /Total hours/);
+});
+
 test('demo provides consistent assignments, dates, labor cost, and dashboard counts', () => {
   const data = createDemoWorkspace();
   assert.equal(isWorkspace(data), true);

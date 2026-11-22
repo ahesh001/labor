@@ -2,18 +2,19 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
-if (!import.meta.env.VITE_FIREBASE_API_KEY) {
-  throw new Error('VITE_FIREBASE_API_KEY is required to initialize Firebase.');
+const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+if (!apiKey) {
+  throw new Error('Missing VITE_FIREBASE_API_KEY. Set it in a local .env file or your deployment environment.');
 }
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "labortracker-cab93.firebaseapp.com",
-  projectId: "labortracker-cab93",
-  storageBucket: "labortracker-cab93.firebasestorage.app",
-  messagingSenderId: "971447295093",
-  appId: "1:971447295093:web:a4c1e8f7b14e8516506c3c",
-  measurementId: "G-QFYE5GZPEG"
+  apiKey,
+  authDomain: 'labortracker-cab93.firebaseapp.com',
+  projectId: 'labortracker-cab93',
+  storageBucket: 'labortracker-cab93.appspot.com',
+  messagingSenderId: '971447295093',
+  appId: '1:971447295093:web:a4c1e8f7b14e8516506c3c',
+  measurementId: 'G-QFYE5GZPEG'
 };
 
 const app = initializeApp(firebaseConfig);
