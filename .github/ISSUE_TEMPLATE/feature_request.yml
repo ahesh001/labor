@@ -1,0 +1,17 @@
+name: Feature request
+description: Suggest an improvement to LaborTracker.
+title: '[Feature] '
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Describe who is affected and what makes the current workflow difficult. Use fictional examples for private data.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: What would a good outcome look like?
+    validations:
+      required: true
