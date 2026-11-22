@@ -1,0 +1,28 @@
+name: Supported Versions Bot
+
+on:
+  release:
+    types: [published, edited, unpublished, deleted]
+  schedule:
+    - cron: '23 13 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: security-policy-supported-versions
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - name: Check the supported release series
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/check-supported-versions.mjs
