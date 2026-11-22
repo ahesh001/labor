@@ -8,7 +8,8 @@ Security updates cover the current hosted build and the highest stable major/min
 | Version | Security support |
 | --- | --- |
 | Current hosted build | Supported |
-| Packaged releases | No stable GitHub release has been published |
+| 1.0.x | Supported |
+| Older release series | Routine security backports are unavailable |
 <!-- supported-versions:end -->
 
 The [Supported Versions Bot](.github/workflows/supported-versions.yml) checks the table when a release is published and every week. If the table needs updating, it opens one issue with the replacement text for a maintainer to review.
