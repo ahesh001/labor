@@ -17,8 +17,8 @@ export default function HeshwareUpdates() {
     return () => controller.abort();
   }, []);
 
-  return <section className="card panel" aria-label="Heshware project updates">
-    <div className="panel-header"><h2>Heshware updates</h2><a className="secondary-link" href="https://heshware.it.com/updates" target="_blank" rel="noreferrer">All updates</a></div>
+  return <section className="card panel" aria-label="Heshware Ads">
+    <div className="panel-header"><h2>Heshware Ads</h2><a className="secondary-link" href="https://heshware.it.com/updates" target="_blank" rel="noreferrer">All updates</a></div>
     {posts === null && <p>Loading project updates…</p>}
     {posts?.length === 0 && <p>Project updates are temporarily unavailable. Visit Heshware for the latest news.</p>}
     {posts?.length > 0 && <div className="signal-list">{posts.map(post => <div className="signal-item" key={post.slug}>
@@ -27,4 +27,3 @@ export default function HeshwareUpdates() {
     </div>)}</div>}
   </section>;
 }
-

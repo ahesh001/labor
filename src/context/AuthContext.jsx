@@ -2,9 +2,10 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../../firebaseConfig';
+import { permissionsFor } from '../auth/permissions';
 
 const AuthContext = createContext(null);
-const demoRoles = ['Admin', 'Lead', 'User'];
+const demoRoles = ['Super Admin', 'Admin', 'OperationsAdmin', 'RegionalAdmin', 'Lead', 'User'];
 function readDemo() {
   try {
     const role = localStorage.getItem('laborTracker.demoRole');
@@ -13,7 +14,9 @@ function readDemo() {
   } catch { return null; }
 }
 function normalizeRole(value) {
-  const role = String(value || '').toLowerCase();
+  const raw = String(value || '');
+  if (['Super Admin', 'OperationsAdmin', 'RegionalAdmin', 'Lead', 'Admin'].includes(raw)) return raw;
+  const role = raw.toLowerCase();
   return role === 'admin' ? 'Admin' : role === 'lead' ? 'Lead' : ['guest', 'nonuser'].includes(role) ? 'Guest' : 'User';
 }
 function deadline(promise, milliseconds) {
@@ -27,6 +30,8 @@ export function AuthProvider({ children }) {
   const [initialRole] = useState(readDemo);
   const [user, setUser] = useState(initialRole ? initialRole === 'Guest' ? guestUser : demoUser : null);
   const [role, setRole] = useState(initialRole || 'Guest');
+  const [assignedPermissions, setAssignedPermissions] = useState([]);
+  const [regions, setRegions] = useState([]);
   const [isDemo, setIsDemo] = useState(Boolean(initialRole && initialRole !== 'Guest'));
   const [loading, setLoading] = useState(!initialRole);
   const [authNotice, setAuthNotice] = useState('');
@@ -40,15 +45,20 @@ export function AuthProvider({ children }) {
       if (mode.current !== 'firebase') return;
       const current = ++revision.current;
       let nextRole = nextUser ? 'User' : 'Guest';
+      let nextPermissions = [];
+      let nextRegions = [];
       if (nextUser?.isAnonymous) nextRole = 'Guest';
       else if (nextUser) {
         try {
           const snapshot = await deadline(getDoc(doc(db, 'users', nextUser.uid)), 5000);
-          nextRole = normalizeRole(snapshot.exists() ? snapshot.data().role : 'User');
-        } catch { if (active && current === revision.current) setAuthNotice('Account permissions could not be loaded. Basic user access is available.'); }
+          const account = snapshot.exists() ? snapshot.data() : {};
+          nextRole = normalizeRole(account.role || 'User');
+          nextPermissions = Array.isArray(account.permissions) ? account.permissions.filter(item => typeof item === 'string') : [];
+          nextRegions = Array.isArray(account.regions) ? account.regions.filter(item => typeof item === 'string') : [];
+        } catch { if (active && current === revision.current) { nextRole = 'User'; nextPermissions = []; nextRegions = []; setAuthNotice('Account permissions could not be loaded. Basic user access is available.'); } }
       }
       if (!active || current !== revision.current || mode.current !== 'firebase') return;
-      setUser(nextUser); setRole(nextRole); setLoading(false);
+      setUser(nextUser); setRole(nextRole); setAssignedPermissions(nextPermissions); setRegions(nextRegions); setLoading(false);
     }, () => { if (active) { setAuthNotice('Authentication service is unavailable. You can still open the demo workspace.'); setLoading(false); } });
     return () => { active = false; revision.current++; clearTimeout(startupTimer); unsubscribe(); };
   }, []);
@@ -63,10 +73,11 @@ export function AuthProvider({ children }) {
     }
     mode.current = guest ? 'guest' : 'demo'; revision.current++;
     setIsDemo(!guest); setUser(guest ? guestUser : demoUser);
-    setRole(nextRole); setLoading(false); setAuthNotice('');
+    setRole(nextRole); setAssignedPermissions([]); setRegions([]); setLoading(false); setAuthNotice('');
   }
+  const effectivePermissions = permissionsFor(role, assignedPermissions);
   const value = {
-    user, role, isDemo, loading, authNotice, isAuthenticated: Boolean(user),
+    user, role, permissions: effectivePermissions, regions, hasPermission: permission => effectivePermissions.includes('*:*') || effectivePermissions.includes(permission), isDemo, loading, authNotice, isAuthenticated: Boolean(user),
     signInDemo(nextRole = 'Admin') { if (!demoRoles.includes(nextRole)) throw new Error('Invalid demo role.'); localSession(nextRole); },
     async signIn(email, password) {
       localStorage.removeItem('laborTracker.demoRole'); localStorage.removeItem('laborTracker.guest'); mode.current = 'firebase'; setIsDemo(false); setAuthNotice('');
@@ -87,7 +98,7 @@ export function AuthProvider({ children }) {
       await signOut(auth);
       localStorage.removeItem('laborTracker.demoRole'); mode.current = 'signed-out'; revision.current++;
       localStorage.removeItem('laborTracker.guest');
-      setUser(null); setRole('Guest'); setIsDemo(false); setAuthNotice('');
+      setUser(null); setRole('Guest'); setAssignedPermissions([]); setRegions([]); setIsDemo(false); setAuthNotice('');
     },
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

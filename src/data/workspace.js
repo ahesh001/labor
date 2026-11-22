@@ -1,6 +1,6 @@
 export const statuses = ['Pending', 'In Transit', 'Delivered'];
 export const localDate = (date = new Date()) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-export const emptyWorkspace = () => ({ deliveries: [], workers: [], entries: [], preferences: { company: 'SmartBox', dailyHours: 8 } });
+export const emptyWorkspace = () => ({ deliveries: [], workers: [], entries: [], preferences: { company: 'SmartBox', dailyHours: 8, heshwareAds: false, analyticsCookies: false, performanceInfo: false } });
 export function validDate(value) {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const date = new Date(`${value}T12:00:00`);
@@ -34,11 +34,12 @@ export function createDemoWorkspace(now = new Date()) {
     { id: `e${i}a`, workerId: worker.id, date: today, hours: 4 + i * 0.5, deliveryId: String(123 + i), notes: 'Morning dispatch and loading', rate: worker.rate },
     { id: `e${i}b`, workerId: worker.id, date: yesterday, hours: 7.5 + (i % 2) * 0.5, deliveryId: '', notes: 'Completed shift', rate: worker.rate },
   ]);
-  return { deliveries, workers, entries, preferences: { company: 'SmartBox Demo', dailyHours: 8 } };
+  return { deliveries, workers, entries, preferences: { company: 'SmartBox Demo', dailyHours: 8, heshwareAds: false, analyticsCookies: false, performanceInfo: false } };
 }
 
 export function validateDelivery(delivery, workspace) {
   if (!delivery.customer?.trim() || !delivery.address?.trim()) throw new Error('Customer and address are required.');
+  if ((delivery.orderNumber && (typeof delivery.orderNumber !== 'string' || delivery.orderNumber.trim().length > 80)) || (delivery.recipientName && (typeof delivery.recipientName !== 'string' || delivery.recipientName.trim().length > 120))) throw new Error('Order number or recipient name is too long.');
   if (!validDate(delivery.scheduledDate)) throw new Error('Choose a valid scheduled date.');
   if (!statuses.includes(delivery.status)) throw new Error('Choose a valid status.');
   if (delivery.workerId && !workspace.workers.some(worker => worker.id === delivery.workerId)) throw new Error('Choose an existing crew member.');
@@ -50,7 +51,7 @@ export function validateEntry(entry, workspace) {
   if (!validDate(entry.date) || entry.date > localDate()) throw new Error('Choose today or an earlier work date.');
   if (!Number.isFinite(entry.hours) || entry.hours <= 0 || entry.hours > 24) throw new Error('Hours must be greater than zero and no more than 24.');
   if (entry.deliveryId && !workspace.deliveries.some(delivery => delivery.id === entry.deliveryId)) throw new Error('Choose an existing delivery.');
-  const total = workspace.entries.filter(item => item.workerId === entry.workerId && item.date === entry.date && item.id !== entry.id).reduce((sum, item) => sum + item.hours, 0);
+  const total = workspace.entries.filter(item => item.workerId === entry.workerId && item.date === entry.date).reduce((sum, item) => sum + item.hours, 0);
   if (total + entry.hours > 24) throw new Error('Total hours for one person in a day cannot exceed 24.');
   return entry;
 }
@@ -77,7 +78,10 @@ export function csv(rows) {
 export function isWorkspace(value) {
   return Boolean(value && Array.isArray(value.workers) && Array.isArray(value.deliveries) && Array.isArray(value.entries) &&
     value.workers.every(item => item && typeof item.id === 'string' && typeof item.name === 'string' && typeof item.title === 'string' && Number.isFinite(item.rate) && item.rate > 0) &&
-    value.deliveries.every(item => item && typeof item.id === 'string' && typeof item.customer === 'string' && typeof item.address === 'string' && typeof item.notes === 'string' && typeof item.escalated === 'boolean' && validDate(item.scheduledDate) && statuses.includes(item.status) && (!item.workerId || value.workers.some(worker => worker.id === item.workerId)) && (!item.completedAt || Number.isFinite(new Date(item.completedAt).getTime())) && Array.isArray(item.events) && item.events.every(event => typeof event?.text === 'string' && Number.isFinite(new Date(event.at).getTime()))) &&
+    value.deliveries.every(item => item && typeof item.id === 'string' && typeof item.customer === 'string' && typeof item.address === 'string' && typeof item.notes === 'string' && (item.orderNumber === undefined || typeof item.orderNumber === 'string') && (item.recipientName === undefined || typeof item.recipientName === 'string') && (item.orderDescription === undefined || typeof item.orderDescription === 'string') && typeof item.escalated === 'boolean' && validDate(item.scheduledDate) && statuses.includes(item.status) && (!item.workerId || value.workers.some(worker => worker.id === item.workerId)) && (!item.completedAt || Number.isFinite(new Date(item.completedAt).getTime())) && Array.isArray(item.events) && item.events.every(event => typeof event?.text === 'string' && Number.isFinite(new Date(event.at).getTime()))) &&
     value.entries.every(item => item && typeof item.id === 'string' && validDate(item.date) && Number.isFinite(item.hours) && item.hours > 0 && item.hours <= 24 && Number.isFinite(item.rate) && item.rate > 0 && value.workers.some(worker => worker.id === item.workerId) && (!item.deliveryId || value.deliveries.some(delivery => delivery.id === item.deliveryId))) &&
-    typeof value.preferences?.company === 'string' && Number.isFinite(value.preferences.dailyHours) && value.preferences.dailyHours > 0 && value.preferences.dailyHours <= 24);
+    typeof value.preferences?.company === 'string' && Number.isFinite(value.preferences.dailyHours) && value.preferences.dailyHours > 0 && value.preferences.dailyHours <= 24 &&
+    (value.preferences.heshwareAds === undefined || typeof value.preferences.heshwareAds === 'boolean') &&
+    (value.preferences.analyticsCookies === undefined || typeof value.preferences.analyticsCookies === 'boolean') &&
+    (value.preferences.performanceInfo === undefined || typeof value.preferences.performanceInfo === 'boolean'));
 }
