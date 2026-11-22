@@ -416,7 +416,12 @@ textarea {
 .form .checkbox-label input { flex: 0 0 20px; width: 20px; height: 20px; margin-top: 2px; padding: 0; accent-color: var(--forest); }
 .checkbox-label span { display: grid; gap: 5px; }
 .checkbox-label small { color: var(--ink-soft); font-size: 0.86rem; font-weight: 400; line-height: 1.5; }
-.optional-preferences { border: 1px solid var(--line-soft); border-radius: 14px; background: rgba(255, 255, 255, 0.7); }
+.optional-preferences {
+  position: relative;
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.7);
+}
 .optional-preferences summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px; padding: 14px 16px; cursor: pointer; color: var(--ink-strong); list-style: none; }
 .optional-preferences summary::-webkit-details-marker { display: none; }
 .optional-preferences .optional-title { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; }
@@ -424,7 +429,22 @@ textarea {
 .optional-preferences[open] .optional-chevron { transform: rotate(180deg); }
 .optional-preferences summary small { color: var(--ink-soft); font-size: 0.86rem; font-weight: 400; }
 .optional-preferences[open] summary { border-bottom: 1px solid var(--line-soft); }
-.optional-preferences-list { display: grid; gap: 12px; padding: 14px; }
+.optional-preferences[open] { z-index: 3; }
+.optional-preferences-list {
+  position: absolute;
+  z-index: 4;
+  inset: calc(100% + 4px) 0 auto;
+  display: grid;
+  gap: 12px;
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  padding: 14px;
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+  background: var(--bg-paper);
+  box-shadow: 0 18px 40px rgba(17, 22, 24, 0.2);
+}
+.detail-layout > .workspace-preferences-panel { position: relative; z-index: 1; }
 .filter-bar { display: flex; flex-wrap: wrap; align-items: end; gap: 16px; margin: 20px 0; }
 .filter-bar label { display: grid; gap: 8px; flex: 1; min-width: 180px; font-weight: 700; }
 .table-row small { display: block; margin-top: 4px; }

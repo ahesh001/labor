@@ -270,7 +270,7 @@ export function SettingsPage() {
           <label className="check-label"><input type="checkbox" checked={accessibility.reduceMotion} onChange={event => updateSetting('reduceMotion', event.target.checked)} />Reduce animations and motion</label>
         </div>
       </article>
-      {canManageWorkspace && <article className="card panel">
+      {canManageWorkspace && <article className="card panel workspace-preferences-panel">
         <h2>Workspace preferences</h2>
         <form className="form" onSubmit={event => {
           event.preventDefault(); setError(''); setMessage('');
