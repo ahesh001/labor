@@ -2,12 +2,14 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { ProtectedRoute as RouteGuard, SplashScreen as LoadingScreen } from './components/AppShell';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { AccessibilityProvider } from './context/AccessibilityContext';
 import { WorkspaceProvider } from './context/WorkspaceContext';
 import {
   DashboardPage as DashboardScreen,
   DeliveryDetailPage as DeliveryDetailScreen,
   DeliveryHistoryPage as DeliveryHistoryScreen,
   DeliveryListPage as DeliveryListScreen,
+  CrewMemberPage,
   NotFoundPage as NotFoundScreen,
   ProfilePage as ProfileScreen,
   SettingsPage as SettingsScreen,
@@ -22,11 +24,13 @@ import {
 function App() {
   return (
     <AuthProvider>
-      <WorkspaceProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </WorkspaceProvider>
+      <AccessibilityProvider>
+        <WorkspaceProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </WorkspaceProvider>
+      </AccessibilityProvider>
     </AuthProvider>
   );
 }
@@ -54,7 +58,7 @@ function AppRoutes() {
       <Route
         path="/deliveries"
         element={
-          <RouteGuard>
+          <RouteGuard requiredPermission="orders:read">
             <DeliveryListScreen />
           </RouteGuard>
         }
@@ -62,7 +66,7 @@ function AppRoutes() {
       <Route
         path="/deliveries/history"
         element={
-          <RouteGuard>
+          <RouteGuard requiredPermission="orders:read">
             <DeliveryHistoryScreen />
           </RouteGuard>
         }
@@ -70,7 +74,7 @@ function AppRoutes() {
       <Route
         path="/deliveries/:id"
         element={
-          <RouteGuard>
+          <RouteGuard requiredPermission="orders:read">
             <DeliveryDetailScreen />
           </RouteGuard>
         }
@@ -78,7 +82,7 @@ function AppRoutes() {
       <Route
         path="/settings"
         element={
-          <RouteGuard>
+          <RouteGuard allowGuest>
             <SettingsScreen />
           </RouteGuard>
         }
@@ -91,7 +95,8 @@ function AppRoutes() {
           </RouteGuard>
         }
       />
-      <Route path="/labor" element={<RouteGuard><LaborPage /></RouteGuard>} />
+      <Route path="/labor" element={<RouteGuard requiredPermission="labor:read"><LaborPage /></RouteGuard>} />
+      <Route path="/labor/crew/:workerId" element={<RouteGuard requiredPermission="labor:read"><RouteGuard requiredPermission="users:read"><CrewMemberPage /></RouteGuard></RouteGuard>} />
       <Route path="*" element={<NotFoundScreen />} />
     </Routes>
   );

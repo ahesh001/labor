@@ -12,6 +12,6 @@ npm run build
 npm run dev
 ```
 
-The development site is at `http://localhost:5173`. The production output is `dist/`, which Firebase Hosting serves with route rewrites from `firebase.json`. A local Docker image can serve the same static build with Nginx. The public endpoint currently uses Firebase Hosting; there is no automatic deploy from GitHub in this repository.
+The development site is at `http://localhost:5173`. The production output is `dist/`, which Firebase Hosting serves with route rewrites from `firebase.json`. A local Docker image can serve the same static build with Nginx. The public endpoint uses Firebase Hosting. Merge and pull-request workflows deploy through GitHub Actions when their Firebase service-account credential and `LABORTRACKER_FIREBASE_API_KEY` repository secret are configured. The browser key is visible in the deployed JavaScript, so Firebase rules and API restrictions remain essential.
 
 Pull requests run tests, a dependency audit, a production build, and CodeQL security scanning. Dependabot proposes dependency updates. The GitHub Copilot custom agents under `.github/agents/` provide optional bug-fix and feature-building instructions if Copilot coding agent is enabled for the account. Maintainers should review their changes, run checks, and deploy separately. Avoid committing real records, debug logs, private keys, or service-account credentials.

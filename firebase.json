@@ -3,6 +3,7 @@
     "rules": "firestore.rules"
   },
   "hosting": {
+    "site": "labortracker-cab93",
     "public": "dist",
     "ignore": [
       "firebase.json",
@@ -17,4 +18,3 @@
     ]
   }
 }
-

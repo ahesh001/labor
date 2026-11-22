@@ -1,6 +1,8 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
 import { createDemoWorkspace, emptyWorkspace, isWorkspace, validateDelivery, validateEntry } from '../data/workspace';
+import { hasPermission } from '../auth/permissions';
+import { applyOptionalCollectionPreferences } from '../services/optionalCollection';
 
 const WorkspaceContext = createContext(null);
 
@@ -28,8 +30,12 @@ function WorkspaceSession({ children, storageKey, seeded }) {
   });
   const [fallback] = useState(() => seeded ? createDemoWorkspace() : emptyWorkspace());
   const workspace = data || fallback;
-  function commit(next) {
-    if (role === 'Guest') throw new Error('Guest workspaces are read-only.');
+  useEffect(() => {
+    void applyOptionalCollectionPreferences(workspace.preferences);
+  }, [workspace.preferences.analyticsCookies, workspace.preferences.performanceInfo]);
+  function commit(next, recover = false) {
+    if (role === 'Guest' || role === 'User') throw new Error('Customer and guest workspaces are read-only.');
+    if (!data && !recover) throw new Error('Saved data could not be read. Changes are blocked to protect the original records.');
     try {
       localStorage.setItem(storageKey, JSON.stringify(next));
     } catch {
@@ -59,6 +65,16 @@ function WorkspaceSession({ children, storageKey, seeded }) {
       item.events = [...previous.events, { at: now, text: `Saved: ${item.status}${item.escalated ? ' · Escalated' : ''}` }];
       commit({ ...workspace, deliveries: workspace.deliveries.map(delivery => delivery.id === id ? item : delivery) });
     },
+    removeDelivery(id) {
+      if (!hasPermission(role, 'orders:cancel')) throw new Error('You do not have access to delete deliveries.');
+      if (!workspace.deliveries.some(item => item.id === id)) throw new Error('Delivery no longer exists.');
+      const entries = workspace.entries.map(entry => {
+        if (entry.deliveryId !== id) return entry;
+        const { deliveryId, ...unlinkedEntry } = entry;
+        return unlinkedEntry;
+      });
+      commit({ ...workspace, deliveries: workspace.deliveries.filter(item => item.id !== id), entries });
+    },
     addEntry(input) {
       validateEntry(input, workspace);
       const worker = workspace.workers.find(item => item.id === input.workerId);
@@ -66,7 +82,7 @@ function WorkspaceSession({ children, storageKey, seeded }) {
     },
     removeEntry(id) { commit({ ...workspace, entries: workspace.entries.filter(item => item.id !== id) }); },
     addWorker(input) {
-      if (!['Admin', 'Lead'].includes(role)) throw new Error('Crew management requires an Admin or Lead role.');
+      if (!hasPermission(role, 'users:create')) throw new Error('Crew management is not available for this account.');
       if (!input.name.trim() || !input.title.trim() || !Number.isFinite(input.rate) || input.rate <= 0) throw new Error('Name, job title, and a positive hourly rate are required.');
       commit({ ...workspace, workers: [...workspace.workers, { ...input, name: input.name.trim(), title: input.title.trim(), id: crypto.randomUUID() }] });
     },
@@ -74,7 +90,7 @@ function WorkspaceSession({ children, storageKey, seeded }) {
       if (!input.company.trim() || !Number.isFinite(input.dailyHours) || input.dailyHours <= 0 || input.dailyHours > 24) throw new Error('Company and a daily target between 0 and 24 hours are required.');
       commit({ ...workspace, preferences: { ...input, company: input.company.trim() } });
     },
-    resetDemo() { if (!seeded) throw new Error('Reset is only available in demo mode.'); commit(createDemoWorkspace()); },
+    resetDemo() { if (!seeded) throw new Error('Reset is only available in demo mode.'); commit(createDemoWorkspace(), true); },
   };
   return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>;
 }
