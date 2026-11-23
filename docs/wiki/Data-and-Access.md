@@ -20,7 +20,11 @@ The current Firestore collections cover `users`, `deliveries`, `customerTracking
 
 Admin wildcard access is broad by design. Protect Admin/Super Admin accounts with strong sign-in and restrict who can assign those roles. The client permission map controls navigation and presentation; Firestore rules are the enforcement boundary for cloud data. Keep both definitions aligned during changes.
 
-Firebase Authentication identifies users; delivery and labor workspaces are still browser-local. Customer tracking alone is cloud-synced. See [Development](Development.md) for validation and release notes.
+Firebase Authentication identifies staff. Deliveries, crew, and work hours sync in a private workspace for each staff account by default. A trusted administrator can assign the same `workspaceId` to staff accounts under `users/{uid}` to give them access to the same team workspace. Give region-scoped staff a workspace containing only records they are authorized to see. Before changing an account’s workspace assignment, review and transfer any records already saved to its old cloud workspace. A membership change selects a different workspace and does not move its data.
+
+Existing local records are kept in each browser. Sign in as the account that originally saved them on each device, open **Settings → Workspace storage**, and download the JSON backup before selecting **Import browser records**. Identical records are skipped on retries. Conflicts with different records using the same ID stop the import before those records can be overwritten. Keep the local backup until all devices and record counts have been checked. For interrupted imports, retry in the same workspace. The original browser copy remains available after import.
+
+The demo uses browser storage. Customer accounts receive only their published tracking records. Display and optional collection preferences remain local. Use the Firebase Auth and Firestore emulators with `--project demo-labortracker` to run `tests/shared-workspace.test.js` with synthetic accounts and data.
 
 ## Optional Heshware Ads
 

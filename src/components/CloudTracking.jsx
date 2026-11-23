@@ -82,15 +82,12 @@ export function PublishTracking({ delivery, isDemo, userUid, canRemove }) {
     setBusy(true); setMessage(''); setError('');
     try {
       const customerUid = uid.trim();
-      const recipientName = delivery.recipientName?.trim() || '';
-      const orderNumber = delivery.orderNumber?.trim() || '';
-      if (customerUid.includes('/')) throw new Error('Enter a valid Customer ID.');
-      if (!recipientName || !orderNumber) throw new Error('Save a recipient name and customer order number in the delivery details before publishing tracking.');
+      if (!customerUid || customerUid.includes('/')) throw new Error('Enter the Customer ID from the customer’s Profile page.');
       const reference = doc(db, 'customerTracking', delivery.id);
       await runTransaction(db, async transaction => {
         const previous = await transaction.get(reference);
         if (previous.exists() && previous.data().customerUid !== customerUid) throw new Error('This delivery is already linked to another customer. Remove its tracking assignment before linking a different customer.');
-        transaction.set(reference, { customerUid, recipientName, recipientNameNormalized: recipientName.normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase(), orderNumber, orderNumberNormalized: orderNumber.normalize('NFKC').trim().replace(/\s+/g, '').toUpperCase(), orderDescription: delivery.orderDescription?.trim() || '', address: delivery.address, scheduledDate: delivery.scheduledDate, status: delivery.status, regionId: delivery.regionId || 'default', updatedAt: serverTimestamp() });
+        transaction.set(reference, { customerUid, address: delivery.address, scheduledDate: delivery.scheduledDate, status: delivery.status, regionId: delivery.regionId || 'default', updatedAt: serverTimestamp() });
         if (!previous.exists() || previous.data().status !== delivery.status) {
           transaction.set(doc(collection(reference, 'events')), { status: delivery.status, at: serverTimestamp() });
         }
@@ -130,8 +127,8 @@ export function PublishTracking({ delivery, isDemo, userUid, canRemove }) {
       {error && <p role="alert" className="error-text">{error}</p>}
     </div> : <form className="form" onSubmit={publish}>
       <p>Connect this delivery to the customer account that should see its tracking updates. Internal notes and crew details are never shared.</p>
-      <label>Customer account ID (optional)<input value={uid} onChange={event => setUid(event.target.value)} placeholder="Link a signed-in customer account" autoComplete="off" /></label>
-      {!hasAttemptedPublish && <p>Recipient name and customer order number are saved from Delivery details for guest lookup. Link a customer account ID as well if the customer signs in. An established assignment cannot be changed; remove tracking first to connect a different customer.</p>}
+      <label>Customer ID<input required value={uid} onChange={event => setUid(event.target.value)} placeholder="Paste the ID from the customer’s Profile page" autoComplete="off" /></label>
+      {!hasAttemptedPublish && <p>Use the Customer ID from the customer’s Profile page. Remove tracking before connecting a different customer.</p>}
       <button className="primary-button" disabled={busy}>{busy ? 'Publishing…' : 'Publish saved delivery status'}</button>
       {error && <p role="alert" className="error-text">{error}</p>}
     </form>}

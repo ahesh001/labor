@@ -9,7 +9,7 @@ LaborTracker is a browser-based workspace for dispatching deliveries, assigning 
 - Review dashboard totals and daily crew progress; change workspace preferences, optionally enable Heshware Ads, Analytics cookies, or Performance Monitoring, and reset the sample data.
 - Explore the demo as staff or a customer. Signed-in customers can see tracking updates that staff publish to their accounts.
 
-Operational deliveries, crew, and timesheets are currently stored in each browser. Published customer tracking uses cloud storage. See [Data and access](docs/wiki/Data-and-Access.md) for role scopes and storage details.
+In the live staff workspace, deliveries, crew, and work hours sync across devices. Staff share data with people assigned to the same team workspace. In **Settings → Workspace storage**, download an existing browser backup and import the records into your cloud workspace. The demo and this browser’s display and optional collection preferences stay local. See [Data and access](docs/wiki/Data-and-Access.md) for role scopes and storage details.
 
 ## Try the app
 
