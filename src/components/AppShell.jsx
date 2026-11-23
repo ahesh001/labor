@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Navigate, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import { appNavLinks } from '../constants/navigation';
 import { useAuth } from '../context/AuthContext';
@@ -28,7 +28,7 @@ export function ProtectedRoute({ children, allowGuest = false, requiredPermissio
 
 export function PageShell({ title, subtitle, actions, children }) {
   const { role, user, logout, isDemo, authNotice, hasPermission } = useAuth();
-  const { storageError } = useWorkspace();
+  const { storageError, cloudId, cloudLoading, connected, hasBrowserRecords, imported } = useWorkspace();
   const [logoutError, setLogoutError] = useState('');
   const [signingOut, setSigningOut] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
@@ -126,6 +126,9 @@ export function PageShell({ title, subtitle, actions, children }) {
           {isDemo && <p className="workspace-notice">Demo mode · Sample data · Changes saved in this browser. Reset the demo or switch roles in Settings.</p>}
           {authNotice && <p role="status" className="workspace-notice">{authNotice}</p>}
           {storageError && <p role="alert" className="error-text">{storageError}</p>}
+          {cloudLoading && <p role="status" className="workspace-notice">Connecting to shared workspace records…</p>}
+          {cloudId && !cloudLoading && !connected && !storageError && <p role="status" className="workspace-notice">Reconnecting to shared storage. New changes will be available when the connection returns.</p>}
+          {cloudId && hasBrowserRecords && !imported && <p className="workspace-notice">Existing records are still on this browser. <Link to="/settings#workspace-storage">Review and import browser records in Settings</Link>.</p>}
           {children}
         </div>
       </main>

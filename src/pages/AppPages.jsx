@@ -137,7 +137,7 @@ export function DeliveryListPage() {
   const [draft, setDraft] = useState({ customer: '', recipientName: '', orderNumber: '', orderDescription: '', address: '', status: 'Pending', workerId: '', scheduledDate: localDate(), notes: '', escalated: false });
   const deliveries = workspace.deliveries.filter(item => item.status !== 'Delivered' && (!status || item.status === status) && `${item.customer} ${item.id} ${item.address}`.toLowerCase().includes(query.toLowerCase()));
   return <PageShell title="Deliveries" subtitle="Create, assign, and update active deliveries." actions={<button className="primary-button" onClick={() => setShowForm(!showForm)}>{showForm ? 'Close form' : 'New delivery'}</button>}>
-    {showForm && <section className="card panel"><h2>New delivery</h2><form className="form form-grid" onSubmit={event => { event.preventDefault(); setError(''); try { const id = workspace.addDelivery(draft); navigateTo[1](id); setShowForm(false); } catch (err) { setError(err.message); } }}><DeliveryFields draft={draft} setDraft={setDraft} workers={workspace.workers} /><Feedback error={error} /><button className="primary-button" type="submit">Create delivery</button></form></section>}
+    {showForm && <section className="card panel"><h2>New delivery</h2><form className="form form-grid" onSubmit={async event => { event.preventDefault(); setError(''); try { const id = await workspace.addDelivery(draft); navigateTo[1](id); setShowForm(false); } catch (err) { setError(err.message); } }}><DeliveryFields draft={draft} setDraft={setDraft} workers={workspace.workers} /><Feedback error={error} /><button className="primary-button" type="submit" disabled={workspace.saving}>Create delivery</button></form></section>}
     {navigateTo[0] && <p role="status" className="success-text">Delivery created. <Link to={`/deliveries/${navigateTo[0]}`}>Open delivery #{navigateTo[0]} →</Link></p>}
     <section className="card panel"><div className="panel-header"><h2>Active board</h2><Link className="secondary-link" to="/deliveries/history">View history</Link></div><div className="filter-bar"><label>Search deliveries<input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Customer, ID, or address" /></label><label>Status<select value={status} onChange={event => setStatus(event.target.value)}><option value="">All active statuses</option><option>Pending</option><option>In Transit</option></select></label><span className="panel-chip">{deliveries.length} routes</span></div><DeliveryTable deliveries={deliveries} /></section>
   </PageShell>;
@@ -147,7 +147,7 @@ export function DeliveryDetailPage() {
   const { id } = useParams();
   const workspace = useWorkspace();
   const delivery = workspace.deliveries.find(item => item.id === id);
-  if (!delivery) return <PageShell title="Delivery not found" subtitle="This delivery may have been removed when the demo was reset."><Link className="primary-link" to="/deliveries">Back to deliveries</Link></PageShell>;
+  if (!delivery) return <PageShell title={workspace.cloudLoading ? 'Loading delivery…' : 'Delivery not found'} subtitle="Check the current workspace and any browser records waiting to be imported."><Link className="primary-link" to="/deliveries">Back to deliveries</Link></PageShell>;
   return <DeliveryEditor key={id} delivery={delivery} />;
 }
 function DeliveryEditor({ delivery }) {
@@ -155,6 +155,7 @@ function DeliveryEditor({ delivery }) {
   const workspace = useWorkspace();
   const navigate = useNavigate();
   const [draft, setDraft] = useState(delivery);
+  const [base, setBase] = useState(delivery);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [deleteState, setDeleteState] = useState('idle');
@@ -163,8 +164,8 @@ function DeliveryEditor({ delivery }) {
   async function removeDelivery() {
     setDeleting(true); setError('');
     try {
-      if (!isDemo) await deleteCustomerTracking(delivery.id);
-      workspace.removeDelivery(delivery.id);
+      if (!isDemo && !workspace.cloudId) await deleteCustomerTracking(delivery.id);
+      await workspace.removeDelivery(delivery.id);
       navigate('/deliveries', { replace: true });
     } catch (cause) {
       const message = cause.code === 'permission-denied'
@@ -178,7 +179,17 @@ function DeliveryEditor({ delivery }) {
   }
   return <PageShell title={`Delivery #${delivery.id}`} subtitle={`${delivery.customer} · ${delivery.address}`} actions={<Link className="secondary-link" to={delivery.status === 'Delivered' ? '/deliveries/history' : '/deliveries'}>Back to list</Link>}>
     <PublishTracking delivery={delivery} isDemo={isDemo} userUid={user?.uid} canRemove={hasPermission('tracking:delete')} />
-    <section className="detail-layout"><article className="card panel"><div className="delivery-hero"><h2>Delivery details</h2><StatusPill status={delivery.status} /></div><div className="progress-rail">{statuses.map((status, i) => <span key={status} className={i <= statuses.indexOf(delivery.status) ? 'is-complete' : ''}>{status}</span>)}</div><form className="form" onSubmit={event => { event.preventDefault(); setMessage(''); setError(''); try { workspace.updateDelivery(delivery.id, draft); setMessage('Delivery saved. Dashboard and history are updated.'); } catch (err) { setError(err.message); } }}><DeliveryFields draft={draft} setDraft={setDraft} workers={workspace.workers} /><Feedback error={error} message={message} /><button className="primary-button" type="submit">Save delivery</button></form>
+    <section className="detail-layout"><article className="card panel"><div className="delivery-hero"><h2>Delivery details</h2><StatusPill status={delivery.status} /></div><div className="progress-rail">{statuses.map((status, i) => <span key={status} className={i <= statuses.indexOf(delivery.status) ? 'is-complete' : ''}>{status}</span>)}</div><form className="form" onSubmit={async event => {
+      event.preventDefault();
+      setMessage('');
+      setError('');
+      try {
+        const saved = await workspace.updateDelivery(delivery.id, draft, base);
+        setBase(saved);
+        setDraft(saved);
+        setMessage('Delivery saved. Dashboard and history are updated.');
+      } catch (err) { setError(err.message); }
+    }}><DeliveryFields draft={draft} setDraft={setDraft} workers={workspace.workers} /><Feedback error={error} message={message} /><button className="primary-button" type="submit" disabled={workspace.saving || deleting}>Save delivery</button>{workspace.cloudId && error && <button className="secondary-button" type="button" onClick={() => { setBase(delivery); setDraft(delivery); setError(''); }}>Reload saved delivery</button>}</form>
       {hasPermission('orders:cancel') && <div className="danger-zone"><h3>Delete delivery</h3><p>Deleting removes this delivery from the workspace and removes its customer tracking record.</p>{deleteState === 'confirm' ? <div className="toolbar"><button className="danger-button" type="button" disabled={deleting} onClick={removeDelivery}>{deleting ? 'Deleting…' : 'Confirm delete'}</button><button className="secondary-button" type="button" disabled={deleting} onClick={() => setDeleteState('idle')}>Keep delivery</button></div> : <button className="danger-button" type="button" onClick={() => setDeleteState('confirm')}>Delete delivery</button>}</div>}
     </article>
     <article className="card panel"><h2>Work and activity</h2><DetailItem label="Assigned crew member" value={workspace.workers.find(worker => worker.id === delivery.workerId)?.name || 'Unassigned'} /><DetailItem label="Labor recorded" value={`${hours.toFixed(1)} hours`} /><DetailItem label="Completed" value={delivery.completedAt ? new Date(delivery.completedAt).toLocaleString() : 'Awaiting completion'} /><div className="signal-list activity-list">{[...delivery.events].reverse().map((event, index) => <div className="signal-item" key={index}><strong>{event.text}</strong><p>{new Date(event.at).toLocaleString()}</p></div>)}</div></article></section>
@@ -196,7 +207,7 @@ export function CrewMemberPage() {
   const { workerId } = useParams();
   const workspace = useWorkspace();
   const worker = workspace.workers.find(item => item.id === workerId);
-  if (!worker) return <PageShell title="Crew member not found" subtitle="This crew record may have been removed."><Link className="primary-link" to="/labor">Back to Labor &amp; Crew</Link></PageShell>;
+  if (!worker) return <PageShell title={workspace.cloudLoading ? 'Loading crew member…' : 'Crew member not found'} subtitle="Check the current workspace and any browser records waiting to be imported."><Link className="primary-link" to="/labor">Back to Labor &amp; Crew</Link></PageShell>;
   const records = workspace.entries.filter(item => item.workerId === workerId).sort((a, b) => b.date.localeCompare(a.date));
   const hours = records.reduce((sum, item) => sum + item.hours, 0);
   const laborCost = records.reduce((sum, item) => sum + item.hours * item.rate, 0);
@@ -232,21 +243,57 @@ export function LaborPage() {
   const selectableCrew = workspace.workers.filter(item => `${item.name} ${item.title}`.toLowerCase().includes(entryCrewSearch.trim().toLowerCase()));
   const hours = entries.reduce((sum, entry) => sum + entry.hours, 0);
   const cost = entries.reduce((sum, entry) => sum + entry.hours * entry.rate, 0);
-  function perform(action, success) { setError(''); setMessage(''); try { action(); setMessage(success); } catch (err) { setError(err.message); } }
+  async function perform(action, success) {
+    setError('');
+    setMessage('');
+    try { await action(); setMessage(success); } catch (err) { setError(err.message); }
+  }
   const setField = (key, value) => setDraft(previous => ({ ...previous, [key]: value }));
   return <PageShell title="Labor & Crew" subtitle="Record work hours, assign jobs, and review labor costs." actions={<button className="secondary-button" onClick={() => downloadCsv('labor-hours.csv', [['Date', 'Crew member', 'Hours', 'Hourly rate', 'Cost', 'Delivery', 'Notes'], ...entries.map(entry => [entry.date, workspace.workers.find(item => item.id === entry.workerId)?.name || 'Unknown', entry.hours, entry.rate, entry.hours * entry.rate, entry.deliveryId, entry.notes])])}>Export hours CSV</button>}>
     <Feedback error={error} message={message} /><section className="hero-grid">{hasPermission('labor:read') && <><StatCard label="Filtered hours" value={hours.toFixed(1)} /><StatCard label="Filtered labor cost" value={money(cost)} /><StatCard label="Crew members" value={workspace.workers.length} /></>}</section>
-    <section className="labor-workspace-grid">{hasPermission('labor:update') && <article className="card panel labor-entry-panel"><h2>Log work hours</h2><form className="form labor-entry-form" onSubmit={event => { event.preventDefault(); perform(() => { workspace.addEntry({ ...draft, hours: Number(draft.hours) }); setDraft({ ...draft, hours: '', notes: '' }); }, 'Work hours saved.'); }}>
+    <section className="labor-workspace-grid">{hasPermission('labor:update') && <article className="card panel labor-entry-panel"><h2>Log work hours</h2><form className="form labor-entry-form" onSubmit={event => { event.preventDefault(); void perform(async () => { await workspace.addEntry({ ...draft, hours: Number(draft.hours) }); setDraft({ ...draft, hours: '', notes: '' }); }, 'Work hours saved.'); }}>
       <label>Crew member<select required value={draft.workerId} onChange={event => setField('workerId', event.target.value)}><option value="">Choose a crew member</option>{selectableCrew.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
       {workspace.workers.length > 10 && <label>Filter crew member<input type="search" value={entryCrewSearch} onChange={event => setEntryCrewSearch(event.target.value)} placeholder="Type a name or job title" /></label>}
       <label>Work date<input required type="date" max={localDate()} value={draft.date} onChange={event => setField('date', event.target.value)} /></label>
       <label>Hours<input required type="number" min="0.25" max="24" step="0.25" value={draft.hours} onChange={event => setField('hours', event.target.value)} /></label>
       <label>Delivery (optional)<select value={draft.deliveryId} onChange={event => setField('deliveryId', event.target.value)}><option value="">General shift work</option>{workspace.deliveries.map(item => <option key={item.id} value={item.id}>#{item.id} · {item.customer}</option>)}</select></label>
-      <label>Work notes<textarea value={draft.notes} maxLength={2000} onChange={event => setField('notes', event.target.value)} /></label><button className="primary-button" type="submit">Save hours</button></form></article>}
+      <label>Work notes<textarea value={draft.notes} maxLength={2000} onChange={event => setField('notes', event.target.value)} /></label><button className="primary-button" type="submit" disabled={workspace.saving}>Save hours</button></form></article>}
     {hasPermission('users:read') && <article className="card panel"><div className="panel-header"><h2>Crew roster</h2><span className="panel-chip">{filteredCrew.length} crew</span></div>{workspace.workers.length > 3 && <label className="crew-roster-filter">Filter crew roster<input type="search" value={crewSearch} onChange={event => { setCrewSearch(event.target.value); setCrewPage(1); }} placeholder="Type a crew member name" /></label>}<div className="signal-list">{visibleCrew.map(item => <div className="signal-item" key={item.id}><strong>{item.name}</strong><p>{item.title} · {money(item.rate)}/hour</p></div>)}{workspace.workers.length === 0 && <p className="empty-state">No crew members have been added.</p>}{workspace.workers.length > 0 && !filteredCrew.length && <p className="empty-state">No crew members match this search.</p>}</div>{filteredCrew.length > crewPageSize && <div className="crew-pagination"><button className="secondary-button" type="button" disabled={currentCrewPage <= 1} onClick={() => setCrewPage(page => Math.max(1, page - 1))}>Previous</button><p>Showing {(currentCrewPage - 1) * crewPageSize + 1}–{Math.min(currentCrewPage * crewPageSize, filteredCrew.length)} of {filteredCrew.length}</p><button className="secondary-button" type="button" disabled={currentCrewPage >= crewPages} onClick={() => setCrewPage(page => Math.min(crewPages, page + 1))}>Next</button></div>}</article>}
-    {hasPermission('users:create') && <article className="card panel"><h2>Add crew member</h2><form className="form" onSubmit={event => { event.preventDefault(); perform(() => { workspace.addWorker({ ...worker, rate: Number(worker.rate) }); setWorker({ name: '', title: '', rate: '' }); setCrewPage(Math.floor(workspace.workers.length / crewPageSize) + 1); }, 'Crew member added.'); }}>{[['name', 'Name', 'text'], ['title', 'Job title', 'text'], ['rate', 'Hourly rate ($)', 'number']].map(([key, label, type]) => <label key={key}>{label}<input required type={type} min={type === 'number' ? '0.01' : undefined} step={type === 'number' ? '0.01' : undefined} maxLength={120} value={worker[key]} onChange={event => setWorker({ ...worker, [key]: event.target.value })} /></label>)}<button className="primary-button" type="submit">Add crew member</button></form></article>}</section>
-    {hasPermission('labor:read') && <section className="card panel"><h2>Timesheet</h2><div className="filter-bar"><label>Filter date<input type="date" value={dateFilter} onChange={event => setDateFilter(event.target.value)} /></label><label>Filter crew<select value={workerFilter} onChange={event => setWorkerFilter(event.target.value)}><option value="">All crew members</option>{workspace.workers.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><button className="secondary-button" onClick={() => { setDateFilter(''); setWorkerFilter(''); }}>Clear filters</button></div><div className="signal-list">{entries.map(entry => <div className="timesheet-row signal-item" key={entry.id}><div><strong>{workspace.workers.find(item => item.id === entry.workerId)?.name}</strong><p>{entry.date} · {entry.hours} hours · {money(entry.hours * entry.rate)}{entry.deliveryId && <> · <Link to={`/deliveries/${entry.deliveryId}`}>Delivery #{entry.deliveryId}</Link></>}</p><p>{entry.notes}</p></div>{hasPermission('labor:update') && (deleteId === entry.id ? <div className="toolbar"><button className="secondary-button" onClick={() => { perform(() => workspace.removeEntry(entry.id), 'Entry removed.'); setDeleteId(null); }}>Confirm removal</button><button className="secondary-button" onClick={() => setDeleteId(null)}>Cancel</button></div> : <button className="secondary-button" onClick={() => setDeleteId(entry.id)}>Remove entry</button>)}</div>)}{!entries.length && <p className="empty-state">No work hours match these filters.</p>}</div></section>}
+    {hasPermission('users:create') && <article className="card panel"><h2>Add crew member</h2><form className="form" onSubmit={event => { event.preventDefault(); void perform(async () => { await workspace.addWorker({ ...worker, rate: Number(worker.rate) }); setWorker({ name: '', title: '', rate: '' }); setCrewPage(1); }, 'Crew member added.'); }}>{[['name', 'Name', 'text'], ['title', 'Job title', 'text'], ['rate', 'Hourly rate ($)', 'number']].map(([key, label, type]) => <label key={key}>{label}<input required type={type} min={type === 'number' ? '0.01' : undefined} step={type === 'number' ? '0.01' : undefined} maxLength={120} value={worker[key]} onChange={event => setWorker({ ...worker, [key]: event.target.value })} /></label>)}<button className="primary-button" type="submit" disabled={workspace.saving}>Add crew member</button></form></article>}</section>
+    {hasPermission('labor:read') && <section className="card panel"><h2>Timesheet</h2><div className="filter-bar"><label>Filter date<input type="date" value={dateFilter} onChange={event => setDateFilter(event.target.value)} /></label><label>Filter crew<select value={workerFilter} onChange={event => setWorkerFilter(event.target.value)}><option value="">All crew members</option>{workspace.workers.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><button className="secondary-button" onClick={() => { setDateFilter(''); setWorkerFilter(''); }}>Clear filters</button></div><div className="signal-list">{entries.map(entry => <div className="timesheet-row signal-item" key={entry.id}><div><strong>{workspace.workers.find(item => item.id === entry.workerId)?.name}</strong><p>{entry.date} · {entry.hours} hours · {money(entry.hours * entry.rate)}{entry.deliveryId && <> · <Link to={`/deliveries/${entry.deliveryId}`}>Delivery #{entry.deliveryId}</Link></>}</p><p>{entry.notes}</p></div>{hasPermission('labor:update') && (deleteId === entry.id ? <div className="toolbar"><button className="secondary-button" disabled={workspace.saving} onClick={() => { void perform(async () => { await workspace.removeEntry(entry.id); setDeleteId(null); }, 'Entry removed.'); }}>Confirm removal</button><button className="secondary-button" onClick={() => setDeleteId(null)}>Cancel</button></div> : <button className="secondary-button" onClick={() => setDeleteId(entry.id)}>Remove entry</button>)}</div>)}{!entries.length && <p className="empty-state">No work hours match these filters.</p>}</div></section>}
   </PageShell>;
+}
+
+function WorkspaceStorage() {
+  const workspace = useWorkspace();
+  const [confirm, setConfirm] = useState(false);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [crew, deliveries, hours] = workspace.browserCounts || [];
+
+  async function importRecords() {
+    setError('');
+    setMessage('');
+    try {
+      const count = await workspace.importBrowserRecords();
+      setConfirm(false);
+      setMessage(count ? `${count} browser records imported. The original browser backup is still available.` : 'These records are already in the shared workspace.');
+    } catch (cause) { setError(cause.message); }
+  }
+
+  return <div className="form" id="workspace-storage">
+    <p role="status">{workspace.connected ? 'Connected. Deliveries, crew, and work hours sync across devices.' : 'Waiting for a connection to shared storage.'}</p>
+    <p>{workspace.cloudId.startsWith('team-') ? 'Staff assigned to this workspace share these records.' : 'This workspace is private to your signed-in account. Use the same account on another device to see its records.'}</p>
+    {!workspace.connected && <button type="button" className="secondary-button" onClick={workspace.retryStorage}>Retry connection</button>}
+    {workspace.hasBrowserRecords && <p>This browser has {crew} crew records, {deliveries} deliveries, and {hours} work-hour entries.{workspace.imported ? ' Import is complete.' : ' Review and import them into this workspace.'}</p>}
+    {workspace.hasBrowserBackup && <button type="button" className="secondary-button" onClick={workspace.downloadBrowserBackup}>Download browser backup</button>}
+    {workspace.hasBrowserRecords && !workspace.imported && workspace.canImport && (confirm ? <>
+      <p>Import these records into the {workspace.cloudId.startsWith('team-') ? 'team workspace' : 'workspace for this account'}? The browser copy will be kept. Records with conflicting IDs will need review.</p>
+      <div className="toolbar"><button type="button" className="primary-button" disabled={!workspace.connected || workspace.saving} onClick={importRecords}>{workspace.saving ? 'Importing…' : 'Confirm import'}</button><button type="button" className="secondary-button" disabled={workspace.saving} onClick={() => setConfirm(false)}>Cancel</button></div>
+    </> : <button type="button" className="primary-button" disabled={!workspace.connected || workspace.saving} onClick={() => setConfirm(true)}>Import browser records</button>)}
+    {workspace.hasBrowserRecords && !workspace.imported && !workspace.canImport && <p>Keep a browser backup. Import requires permission to add crew, deliveries, and work hours.</p>}
+    <Feedback error={error} message={message} />
+  </div>;
 }
 
 export function SettingsPage() {
@@ -293,7 +340,7 @@ export function SettingsPage() {
       </article>}
       {canManageWorkspace && <article className="card panel">
         <h2>{isDemo ? 'Demo controls' : 'Workspace storage'}</h2>
-        <p>Work records are saved in this browser for this workspace. Use CSV exports to keep a copy. Shared cloud operations are not configured.</p>
+        {workspace.cloudId ? <WorkspaceStorage /> : <p>Demo records are saved in this browser. Use CSV exports to keep a copy.</p>}
         {isDemo && <div className="form">
           <label>Demo role<select value={role} onChange={event => { try { signInDemo(event.target.value); } catch (err) { setError(err.message); } }}><option>Super Admin</option><option>Admin</option><option>OperationsAdmin</option><option>RegionalAdmin</option><option>Lead</option><option>User</option></select></label>
           <p>Switch roles to demonstrate the permission scopes applied to each staff role.</p>
